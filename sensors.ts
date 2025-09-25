@@ -1,3 +1,8 @@
+/**
+* Wrapper around all micro:bit sensors + ability to wrap Jacdac sensors.
+* Provides high level functionality for logging, buffering, normalising and scheduling sensors.
+*/
+//% weight=1 color="#C2C2C2" icon="\uf233"
 namespace sensors {
   /**
    * Generated at recordingConfigSelection 
