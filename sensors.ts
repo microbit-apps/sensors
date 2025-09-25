@@ -38,13 +38,26 @@ namespace sensors {
     "<=": function (reading: number, comparator: number) { return reading <= comparator }
   }
 
-  /** To what precision whould readings fromt he sensor be cut to when they're logged? */
+  /** To what precision should readings from the sensor be truncated to when they're logged? */
   const READING_PRECISION: number = 9
 
 
-  //-------------------
+  //---------------------------------------------------------------
   // Factory Functions:
-  //-------------------
+  // recordingConfig(), getMicrobitSensor() and wrapJacdacSensor()
+  //---------------------------------------------------------------
+
+
+  /**
+  *
+  */
+  //% group="Sensors"
+  //% blockId=sensors_recording_config
+  //% block="%sensors recording Config |measurements $measurements |period $period |inequality $inequality |comparator $comparator"
+  //% weight=99
+  export function recordingConfig(measurements: number, period: number, inequality?: string, comparator?: number): RecordingConfig {
+    return { measurements, period, inequality, comparator }
+  }
 
   /**
    * Factory function used to generate a Sensor from that sensors: .getName(), sensorSelect name, or its radio name
@@ -52,6 +65,10 @@ namespace sensors {
    * @param name either sensor.getName(), sensor.getRadioName() or the ariaID the button that represents the sensor in SensorSelect uses.
    * @returns concrete sensor that the input name corresponds to. OR NULL if no sensor matches the name.
    */
+  //% group="Sensors"
+  //% blockId=sensors_get_microbit_sensor
+  //% block="%sensors get microbit sensor |name $name"
+  //% weight=98
   export function getMicrobitSensor(name: string): Sensor {
     if (name == "Accel. X" || name == "Accelerometer X" || name == "AX")
       return new Sensor({
@@ -211,6 +228,10 @@ namespace sensors {
    * @param setupFn Please put at least () => {modules.mySensor.start()} here.
    * @returns A Sensor object that can be used like any other sensor in this library.
    */
+  //% group="Sensors"
+  //% blockId=sensors_wrap_jacdac_sensor
+  //% block="%sensors wrap jacdac sensor |name $name |f $f |min $min |max $max |setupFn $setupFn"
+  //% weight=98
   export function wrapJacdacSensor(name: string, f: () => number, min: number, max: number, setupFn?: () => void): Sensor {
     return new Sensor({
       name,
