@@ -1,19 +1,19 @@
 {
-  "name": "sensors",
-  "version": "0.0.0",
-  "files": [
-    "main.ts",
-    "sensors.ts",
-    "sensorScheduler.ts"
-  ],
-  "supportedTargets": [
-    "microbit"
-  ],
-  "dependencies": {
-    "core": "*",
-    "radio": "*",
-    "microphone": "*",
-    "datalogger": "*"
-  },
-  "testDependencies": {}
+    "name": "sensors",
+    "version": "0.0.1",
+    "files": [
+        "main.ts",
+        "sensors.ts",
+        "sensorScheduler.ts"
+    ],
+    "supportedTargets": [
+        "microbit"
+    ],
+    "dependencies": {
+        "core": "*",
+        "radio": "*",
+        "microphone": "*",
+        "datalogger": "*"
+    },
+    "testDependencies": {}
 }
