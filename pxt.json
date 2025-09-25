@@ -1,0 +1,19 @@
+{
+  "name": "my-project",
+  "version": "0.0.0",
+  "files": [
+    "main.ts",
+    "sensors.ts",
+    "sensorScheduler.ts"
+  ],
+  "supportedTargets": [
+    "microbit"
+  ],
+  "dependencies": {
+    "core": "*",
+    "radio": "*",
+    "microphone": "*",
+    "datalogger": "*"
+  },
+  "testDependencies": {}
+}
