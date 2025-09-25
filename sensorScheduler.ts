@@ -1,4 +1,4 @@
-namespace sensor {
+namespace sensors {
   /**
    * An object that implements this interface can be (optionally) passed to the SensorScheduler to invoke this callback after each log.
    * At the end of logging an empty string is passed to the callback. Please note that "" is also what is returned by sensor.log() if no data is logged.

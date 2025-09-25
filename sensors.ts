@@ -1,4 +1,4 @@
-namespace sensor {
+namespace sensors {
   /**
    * Generated at recordingConfigSelection 
    * Passed to and owned by a sensor
@@ -40,6 +40,188 @@ namespace sensor {
 
   /** To what precision whould readings fromt he sensor be cut to when they're logged? */
   const READING_PRECISION: number = 9
+
+
+  //-------------------
+  // Factory Functions:
+  //-------------------
+
+  /**
+   * Factory function used to generate a Sensor from that sensors: .getName(), sensorSelect name, or its radio name
+   * This is a single factory within this abstract class to reduce binary size
+   * @param name either sensor.getName(), sensor.getRadioName() or the ariaID the button that represents the sensor in SensorSelect uses.
+   * @returns concrete sensor that the input name corresponds to. OR NULL if no sensor matches the name.
+   */
+  export function getMicrobitSensor(name: string): Sensor {
+    if (name == "Accel. X" || name == "Accelerometer X" || name == "AX")
+      return new Sensor({
+        name: "Accel. X",
+        rName: "AX",
+        f: () => input.acceleration(Dimension.X),
+        min: -2048,
+        max: 2048,
+        isJacdacSensor: false,
+        setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
+      });
+
+    else if (name == "Accel. Y" || name == "Accelerometer Y" || name == "AY")
+      return new Sensor({
+        name: "Accel. Y",
+        rName: "AY",
+        f: () => input.acceleration(Dimension.Y),
+        min: -2048,
+        max: 2048,
+        isJacdacSensor: false,
+        setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
+      });
+
+    else if (name == "Accel. Z" || name == "Accelerometer Z" || name == "AZ")
+      return new Sensor({
+        name: "Accel. Z",
+        rName: "AZ",
+        f: () => input.acceleration(Dimension.Z),
+        min: -2048,
+        max: 2048,
+        isJacdacSensor: false,
+        setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
+      });
+
+    else if (name == "Pitch" || name == "P")
+      return new Sensor({
+        name: "Pitch",
+        rName: "P",
+        f: () => input.rotation(Rotation.Pitch),
+        min: -180,
+        max: 180,
+        isJacdacSensor: false
+      });
+
+    else if (name == "Roll" || name == "R")
+      return new Sensor({
+        name: "Roll",
+        rName: "R",
+        f: () => input.rotation(Rotation.Roll),
+        min: -180,
+        max: 180,
+        isJacdacSensor: false
+      });
+
+    else if (name == "A. Pin 0" || name == "Analog Pin 0" || name == "AP0")
+      return new Sensor({
+        name: "A. Pin 0",
+        rName: "AP0",
+        f: () => pins.analogReadPin(AnalogPin.P0) / 340,
+        min: 0,
+        max: 3,
+        isJacdacSensor: false
+      });
+
+    else if (name == "A. Pin 1" || name == "Analog Pin 1" || name == "AP1")
+      return new Sensor({
+        name: "A. Pin 1",
+        rName: "AP1",
+        f: () => pins.analogReadPin(AnalogPin.P1) / 340,
+        min: 0,
+        max: 3,
+        isJacdacSensor: false
+      });
+
+    else if (name == "A. Pin 2" || name == "Analog Pin 2" || name == "AP2")
+      return new Sensor({
+        name: "A. Pin 2",
+        rName: "AP2",
+        f: () => pins.analogReadPin(AnalogPin.P2) / 340,
+        min: 0,
+        max: 3,
+        isJacdacSensor: false
+      });
+
+    else if (name == "Light" || name == "L")
+      return new Sensor({
+        name: "Light",
+        rName: "L",
+        f: () => input.lightLevel(),
+        min: 0,
+        max: 255,
+        isJacdacSensor: false
+      });
+
+    else if (name == "Temp." || name == "Temperature" || name == "T")
+      return new Sensor({
+        name: "Temp.",
+        rName: "T",
+        f: () => input.temperature(),
+        min: -40,
+        max: 100,
+        isJacdacSensor: false
+      });
+
+    else if (name == "Magnet" || name == "M")
+      return new Sensor({
+        name: "Magnet",
+        rName: "M",
+        f: () => input.magneticForce(Dimension.Strength),
+        min: -5000,
+        max: 5000,
+        isJacdacSensor: false
+      });
+
+    else if (name == "Logo Pressed" || name == "Logo Press" || name == "LP")
+      return new Sensor({
+        name: "Logo Press",
+        rName: "LP",
+        f: () => (input.logoIsPressed() ? 1 : 0),
+        min: 0,
+        max: 1,
+        isJacdacSensor: false
+      });
+
+    else if (name == "Volume" || name == "Microphone" || name == "V")
+      return new Sensor({
+        name: "Microphone",
+        rName: "V",
+        f: () => input.soundLevel(),
+        min: 0,
+        max: 255,
+        isJacdacSensor: false
+      });
+
+    else if (name == "Compass" || name == "C")
+      return new Sensor({
+        name: "Compass",
+        rName: "C",
+        f: () => input.compassHeading(),
+        min: 0,
+        max: 360,
+        isJacdacSensor: false
+      });
+    else
+      return null;
+  }
+
+  /**
+   * Creates a Sensor object for a Jacdac sensor.
+   * TODO: this.rName is just "" atm. This should be unique to all sensors. It would be difficult for the user to know the unique radioName of the sensor though.
+
+   * Additionally, we might be able to offer a function that takes a Jacdac sensor object and extracts these members from it.
+   * @param name Of the Jacdac sensor.
+   * @param f A function that returns the current reading of the sensor as a number. Disconnected Jacdac sensors typically return 'undefined' when called.
+   * @param min The minimum possible reading of the sensor. Used for normalisation and display purposes.
+   * @param max The maximum possible reading of the sensor. Used for normalisation and display purposes.
+   * @param setupFn Please put at least () => {modules.mySensor.start()} here.
+   * @returns A Sensor object that can be used like any other sensor in this library.
+   */
+  export function wrapJacdacSensor(name: string, f: () => number, min: number, max: number, setupFn?: () => void): Sensor {
+    return new Sensor({
+      name,
+      rName: "",
+      f,
+      min,
+      max,
+      isJacdacSensor: false,
+      setupFn
+    });
+  }
 
   /**
    * Abstraction for all available sensors.
@@ -137,186 +319,6 @@ namespace sensor {
         opts.setupFn();
     }
 
-    //------------------
-    // Factory Function:
-    //------------------
-
-    /**
-     * Factory function used to generate a Sensor from that sensors: .getName(), sensorSelect name, or its radio name
-     * This is a single factory within this abstract class to reduce binary size
-     * @param name either sensor.getName(), sensor.getRadioName() or the ariaID the button that represents the sensor in SensorSelect uses.
-     * @returns concrete sensor that the input name corresponds to. OR NULL if no sensor matches the name.
-     */
-    public static getMicrobitSensor(name: string): Sensor {
-      if (name == "Accel. X" || name == "Accelerometer X" || name == "AX")
-        return new Sensor({
-          name: "Accel. X",
-          rName: "AX",
-          f: () => input.acceleration(Dimension.X),
-          min: -2048,
-          max: 2048,
-          isJacdacSensor: false,
-          setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
-        });
-
-      else if (name == "Accel. Y" || name == "Accelerometer Y" || name == "AY")
-        return new Sensor({
-          name: "Accel. Y",
-          rName: "AY",
-          f: () => input.acceleration(Dimension.Y),
-          min: -2048,
-          max: 2048,
-          isJacdacSensor: false,
-          setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
-        });
-
-      else if (name == "Accel. Z" || name == "Accelerometer Z" || name == "AZ")
-        return new Sensor({
-          name: "Accel. Z",
-          rName: "AZ",
-          f: () => input.acceleration(Dimension.Z),
-          min: -2048,
-          max: 2048,
-          isJacdacSensor: false,
-          setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
-        });
-
-      else if (name == "Pitch" || name == "P")
-        return new Sensor({
-          name: "Pitch",
-          rName: "P",
-          f: () => input.rotation(Rotation.Pitch),
-          min: -180,
-          max: 180,
-          isJacdacSensor: false
-        });
-
-      else if (name == "Roll" || name == "R")
-        return new Sensor({
-          name: "Roll",
-          rName: "R",
-          f: () => input.rotation(Rotation.Roll),
-          min: -180,
-          max: 180,
-          isJacdacSensor: false
-        });
-
-      else if (name == "A. Pin 0" || name == "Analog Pin 0" || name == "AP0")
-        return new Sensor({
-          name: "A. Pin 0",
-          rName: "AP0",
-          f: () => pins.analogReadPin(AnalogPin.P0) / 340,
-          min: 0,
-          max: 3,
-          isJacdacSensor: false
-        });
-
-      else if (name == "A. Pin 1" || name == "Analog Pin 1" || name == "AP1")
-        return new Sensor({
-          name: "A. Pin 1",
-          rName: "AP1",
-          f: () => pins.analogReadPin(AnalogPin.P1) / 340,
-          min: 0,
-          max: 3,
-          isJacdacSensor: false
-        });
-
-      else if (name == "A. Pin 2" || name == "Analog Pin 2" || name == "AP2")
-        return new Sensor({
-          name: "A. Pin 2",
-          rName: "AP2",
-          f: () => pins.analogReadPin(AnalogPin.P2) / 340,
-          min: 0,
-          max: 3,
-          isJacdacSensor: false
-        });
-
-      else if (name == "Light" || name == "L")
-        return new Sensor({
-          name: "Light",
-          rName: "L",
-          f: () => input.lightLevel(),
-          min: 0,
-          max: 255,
-          isJacdacSensor: false
-        });
-
-      else if (name == "Temp." || name == "Temperature" || name == "T")
-        return new Sensor({
-          name: "Temp.",
-          rName: "T",
-          f: () => input.temperature(),
-          min: -40,
-          max: 100,
-          isJacdacSensor: false
-        });
-
-      else if (name == "Magnet" || name == "M")
-        return new Sensor({
-          name: "Magnet",
-          rName: "M",
-          f: () => input.magneticForce(Dimension.Strength),
-          min: -5000,
-          max: 5000,
-          isJacdacSensor: false
-        });
-
-      else if (name == "Logo Pressed" || name == "Logo Press" || name == "LP")
-        return new Sensor({
-          name: "Logo Press",
-          rName: "LP",
-          f: () => (input.logoIsPressed() ? 1 : 0),
-          min: 0,
-          max: 1,
-          isJacdacSensor: false
-        });
-
-      else if (name == "Volume" || name == "Microphone" || name == "V")
-        return new Sensor({
-          name: "Microphone",
-          rName: "V",
-          f: () => input.soundLevel(),
-          min: 0,
-          max: 255,
-          isJacdacSensor: false
-        });
-
-      else if (name == "Compass" || name == "C")
-        return new Sensor({
-          name: "Compass",
-          rName: "C",
-          f: () => input.compassHeading(),
-          min: 0,
-          max: 360,
-          isJacdacSensor: false
-        });
-      else
-        return null;
-    }
-
-    /**
-     * Creates a Sensor object for a Jacdac sensor.
-     * TODO: this.rName is just "" atm. This should be unique to all sensors. It would be difficult for the user to know the unique radioName of the sensor though.
-
-     * Additionally, we might be able to offer a function that takes a Jacdac sensor object and extracts these members from it.
-     * @param name Of the Jacdac sensor.
-     * @param f A function that returns the current reading of the sensor as a number. Disconnected Jacdac sensors typically return 'undefined' when called.
-     * @param min The minimum possible reading of the sensor. Used for normalisation and display purposes.
-     * @param max The maximum possible reading of the sensor. Used for normalisation and display purposes.
-     * @param setupFn Please put at least () => {modules.mySensor.start()} here.
-     * @returns A Sensor object that can be used like any other sensor in this library.
-     */
-    public static wrapJacdacSensor(name: string, f: () => number, min: number, max: number, setupFn?: () => void): Sensor {
-      return new Sensor({
-        name,
-        rName: "",
-        f,
-        min,
-        max,
-        isJacdacSensor: false,
-        setupFn
-      });
-    }
 
 
     //---------------------
