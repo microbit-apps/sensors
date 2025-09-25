@@ -58,7 +58,7 @@ namespace sensors {
   */
   //% group="Sensors"
   //% blockId=sensors_recording_config
-  //% block="%sensors Recording configuration information for the sensor |measurements $measurements |period $period |inequality $inequality |comparator $comparator"
+  //% block="Recording information for sensor logging |measurements $measurements |period $period |inequality $inequality |comparator $comparator"
   //% weight=99
   export function recordingConfig(measurements: number, period: number, inequality?: string, comparator?: number): RecordingConfig {
     return { measurements, period, inequality, comparator }
@@ -72,7 +72,7 @@ namespace sensors {
    */
   //% group="Sensors"
   //% blockId=sensors_get_microbit_sensor
-  //% block="%sensors get microbit sensor |name $name"
+  //% block="get a microbit sensor from |name $name"
   //% weight=98
   export function getMicrobitSensor(name: string): Sensor {
     if (name == "Accel. X" || name == "Accelerometer X" || name == "AX")
@@ -235,9 +235,9 @@ namespace sensors {
    */
   //% group="Sensors"
   //% blockId=sensors_wrap_jacdac_sensor
-  //% block="%sensors wrap jacdac sensor |name $name |f $f |min $min |max $max |setupFn $setupFn"
-  //% weight=98
-  export function wrapJacdacSensor(name: string, f: () => number, min: number, max: number, setupFn?: () => void): Sensor {
+  //% block="Wrap a jacdac sensor |name $name |f $f |min $min |max $max |setupFn $setupFn"
+  //% weight=97
+  export function wrapJacdacSensor(name: string, f: any, min: number, max: number, setupFn?: any): Sensor {
     return new Sensor({
       name,
       rName: "",
