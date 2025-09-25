@@ -2,7 +2,7 @@
 * Wrapper around all micro:bit sensors + ability to wrap Jacdac sensors.
 * Provides high level functionality for logging, buffering, normalising and scheduling sensors.
 */
-//% weight=1 color="#C2C2C2" icon="\uf233"
+//% weight=1 color="#063970" icon="\uf233"
 namespace sensors {
   /**
    * Generated at recordingConfigSelection 
@@ -58,7 +58,7 @@ namespace sensors {
   */
   //% group="Sensors"
   //% blockId=sensors_recording_config
-  //% block="%sensors recording Config |measurements $measurements |period $period |inequality $inequality |comparator $comparator"
+  //% block="%sensors Recording configuration information for the sensor |measurements $measurements |period $period |inequality $inequality |comparator $comparator"
   //% weight=99
   export function recordingConfig(measurements: number, period: number, inequality?: string, comparator?: number): RecordingConfig {
     return { measurements, period, inequality, comparator }
