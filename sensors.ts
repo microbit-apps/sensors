@@ -255,19 +255,19 @@ namespace sensors {
    */
   export class Sensor {
     /** Immutable: Forward facing name that is presented to the user in LiveDataViewer, Sensor Selection & TabularDataViewer */
-    private readonly name: string;
+    public readonly name: string;
     /** Immutable: Name used for Radio Communication, a unique shorthand, see distributedLogging.ts */
-    private readonly radioName: string;
+    public readonly radioName: string;
     /** Immutable: Minimum possible sensor reading, based on datasheet of peripheral. Some sensors transform their output (Analog pins transform 0->1023, into 0->3V volt range) */
-    private readonly minimum: number;
+    public readonly minimum: number;
     /** Immutable: Maximum possible sensor reading, based on datasheet of peripheral. Some sensors transform their output (Analog pins transform 0->1023, into 0->3V volt range) */
-    private readonly maximum: number;
+    public readonly maximum: number;
     /** Immutable: Abs(minimum) + Abs(maximum); calculated once at start since min & max can't change */
-    private readonly range: number;
+    public readonly range: number;
     /** Immutable: Wrapper around the sensors call, e.g: sensorFn = () => input.acceleration(Dimension.X) */
     private readonly sensorFn: () => number;
     /** Immutable: Need to know whether or not this sensor is on the microbit or is an external Jacdac one; see sensorSelection.ts */
-    private readonly isJacdacSensor: boolean;
+    public readonly isJacdacSensor: boolean;
 
     /** Set by .setConfig() */
     public totalMeasurements: number
@@ -351,12 +351,8 @@ namespace sensors {
     // Interface Functions:
     //---------------------
 
-    public getName(): string { return this.name }
-    public getRadioName(): string { return this.radioName }
-    public getReading(): number { return this.sensorFn() }
-    public getNormalisedReading(): number { return Math.abs(this.getReading()) / this.range }
-    public getMinimum(): number { return this.minimum; }
-    public getMaximum(): number { return this.maximum; }
+    public get reading(): number { return this.sensorFn() }
+    public get normalisedReading(): number { return (this.reading - this.minimum) / this.range }
     public isJacdac(): boolean { return this.isJacdacSensor; }
     public getMaxBufferSize(): number { return this.maxBufferSize }
     public getNthReading(n: number): number { return this.dataBuffer[n] }
@@ -430,7 +426,7 @@ namespace sensors {
      * @returns the new length of this.dataBuffer (same as this.normalisedDataBuffer)
      */
     public readIntoBufferOnce(): number {
-      const reading = this.getReading()
+      const reading = this.reading
 
       if (this.dataBuffer.length >= this.maxBufferSize || reading === undefined) {
         this.dataBuffer.shift();
@@ -442,7 +438,7 @@ namespace sensors {
 
       this.numberOfReadings += 1
       this.dataBuffer.push(reading);
-      this.normalisedDataBuffer.push((reading - this.getMinimum()) / this.range);
+      this.normalisedDataBuffer.push((reading - this.minimum) / this.range);
       return this.dataBuffer.length
     }
 
@@ -453,8 +449,8 @@ namespace sensors {
      * @param fromY The y value that each element should be offset by.
      */
     public normaliseDataBuffer(): void {
-      const min = this.getMinimum()
-      const range: number = Math.abs(min) + this.getMaximum();
+      const min = this.minimum
+      const range: number = Math.abs(min) + this.maximum;
 
       this.normalisedDataBuffer = []
       for (let i = 0; i < this.dataBuffer.length; i++) {
@@ -483,32 +479,32 @@ namespace sensors {
      * @returns A CSV string of the log that was made, the sensors name will be cut-short to its .radioName. "" is returned if no log is made.
      */
     public log(time: number): string {
-      this.lastLoggedReading = this.getReading()
+      this.lastLoggedReading = this.reading
 
       const reading = this.lastLoggedReading.toString().slice(0, READING_PRECISION)
 
       if (this.isInEventMode) {
         if (sensorEventFunctionLookup[this.config.inequality](this.lastLoggedReading, this.config.comparator)) {
           datalogger.log(
-            datalogger.createCV("Sensor", this.getName()),
+            datalogger.createCV("Sensor", this.name),
             datalogger.createCV("Time (ms)", time),
             datalogger.createCV("Reading", reading),
             datalogger.createCV("Event", this.config.inequality + " " + this.config.comparator)
           )
           this.config.measurements -= 1
-          return this.getRadioName() + "," + time.toString() + "," + reading + "," + this.config.inequality + " " + this.config.comparator
+          return this.radioName + "," + time.toString() + "," + reading + "," + this.config.inequality + " " + this.config.comparator
         }
       }
 
       else {
         datalogger.log(
-          datalogger.createCV("Sensor", this.getName()),
+          datalogger.createCV("Sensor", this.name),
           datalogger.createCV("Time (ms)", time.toString()),
           datalogger.createCV("Reading", reading),
           datalogger.createCV("Event", "N/A")
         )
         this.config.measurements -= 1
-        return this.getRadioName() + "," + time.toString() + "," + reading + "," + "N/A"
+        return this.radioName + "," + time.toString() + "," + reading + "," + "N/A"
       }
       return ""
     }
