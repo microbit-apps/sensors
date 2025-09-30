@@ -249,6 +249,12 @@ namespace sensors {
     });
   }
 
+  export function f(client: jacdac.Client): Sensor {
+    basic.showString(client.roleName)
+
+    return new Sensor({ name: "", rName: "", f: () => { return 2 }, min: 0, max: 0, isJacdacSensor: false });
+  }
+
   /**
    * Abstraction for all available sensors.
    * This class is extended by each of the concrete sensors which add on static methods for their name, getting their readings & optionally min/max readings
