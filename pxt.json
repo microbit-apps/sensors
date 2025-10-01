@@ -5,6 +5,7 @@
     "main.ts",
     "sensors.ts",
     "sensorScheduler.ts",
+    "jacdacSensorMap.ts",
     "pid.ts"
   ],
   "supportedTargets": [
