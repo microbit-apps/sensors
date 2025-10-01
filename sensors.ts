@@ -297,7 +297,7 @@ namespace sensors {
       this.radioName = opts.rName
       this.minimum = opts.min
       this.maximum = opts.max
-      this.range = Math.abs(this.minimum) + this.maximum
+      this.range = this.maximum - this.minimum
       this.sensorFn = opts.sensorFn
       this.isJacdacSensor = (opts.isJacdacSensor == undefined) ? false : opts.isJacdacSensor
 
@@ -310,16 +310,17 @@ namespace sensors {
     // Interface Functions:
     //---------------------
 
+    /** Latest value from the sensor. Does not change any buffered readings.*/
     public get reading(): number { return this.sensorFn() }
+    /** Latest value from the sensor. Normalised by this sensors minimum and maximum. Does not change any buffered readings.*/
     public get normalisedReading(): number { return (this.reading - this.minimum) / this.range }
-    public isJacdac(): boolean { return this.isJacdacSensor; }
+    public get period(): number { return this.config.period; }
+    public get measurements(): number { return this.config.measurements }
     public getMaxBufferSize(): number { return this.maxBufferSize }
     public getNthReading(n: number): number { return this.dataBuffer[n] }
     public getNthNormalisedReading(n: number): number { return this.normalisedDataBuffer[n] }
     public getBufferLength(): number { return this.dataBuffer.length }
     public getNormalisedBufferLength(): number { return this.normalisedDataBuffer.length }
-    public getPeriod(): number { return this.config.period; }
-    public getMeasurements(): number { return this.config.measurements }
     public hasMeasurements(): boolean { return this.config.measurements > 0; }
 
     /**
@@ -329,9 +330,9 @@ namespace sensors {
     public getRecordingInformation(): string[] {
       if (this.hasMeasurements())
         return [
-          this.getPeriod() / 1000 + " second period",
+          this.period / 1000 + " second period",
           this.config.measurements.toString() + " measurements left",
-          ((this.config.measurements * this.getPeriod()) / 1000).toString() + " seconds left",
+          ((this.config.measurements * this.period) / 1000).toString() + " seconds left",
           "Last log was " + this.lastLoggedReading.toString().slice(0, 5),
         ]
       else
@@ -437,7 +438,10 @@ namespace sensors {
      * You can pass in control.millis() if you want the exact time though.
      * @returns A CSV string of the log that was made, the sensors name will be cut-short to its .radioName. "" is returned if no log is made.
      */
-    public log(time: number): string {
+    public log(time?: number): string {
+      if (!time)
+        time = control.millis()
+
       this.lastLoggedReading = this.reading
 
       const reading = this.lastLoggedReading.toString().slice(0, READING_PRECISION)

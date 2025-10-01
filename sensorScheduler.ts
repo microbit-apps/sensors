@@ -40,11 +40,11 @@ namespace sensors {
       // Get the sensor that will take the longest to complete:
       // The number of measurements this sensor has left is displayed on the microbit 5x5 led grid; when the Arcade Shield is not connected.
       this.sensorWithMostTimeLeft = sensors[0]
-      let mostTimeLeft = this.sensorWithMostTimeLeft.totalMeasurements * this.sensorWithMostTimeLeft.getPeriod()
+      let mostTimeLeft = this.sensorWithMostTimeLeft.totalMeasurements * this.sensorWithMostTimeLeft.period
 
       this.sensors.forEach(sensor => {
-        if ((sensor.totalMeasurements * sensor.getPeriod()) > mostTimeLeft) {
-          mostTimeLeft = sensor.totalMeasurements * sensor.getPeriod()
+        if ((sensor.totalMeasurements * sensor.period) > mostTimeLeft) {
+          mostTimeLeft = sensor.totalMeasurements * sensor.period
           this.sensorWithMostTimeLeft = sensor
         }
       })
@@ -52,8 +52,8 @@ namespace sensors {
       this.continueLogging = true;
 
       // Setup schedule so that periods are in order ascending
-      sensors.sort((a, b) => a.getPeriod() - b.getPeriod())
-      this.schedule = sensors.map((sensor) => { return { sensor, waitTime: sensor.getPeriod() } })
+      sensors.sort((a, b) => a.period - b.period)
+      this.schedule = sensors.map((sensor) => { return { sensor, waitTime: sensor.period } })
     }
 
     //--------------------------
@@ -90,7 +90,7 @@ namespace sensors {
         // Log all sensors once:
         for (let i = 0; i < this.schedule.length; i++) {
           if (this.showOnLEDMatrixWhenDone && this.schedule[i].sensor == this.sensorWithMostTimeLeft)
-            basic.showNumber(this.sensorWithMostTimeLeft.getMeasurements())
+            basic.showNumber(this.sensorWithMostTimeLeft.measurements)
 
           // Make the datalogger log the data:
           const logAsCSV = this.schedule[i].sensor.log(0)
@@ -139,7 +139,7 @@ namespace sensors {
             // Log sensors:
             else if (currentTime % this.schedule[i].waitTime == 0) {
               if (this.showOnLEDMatrixWhenDone && this.schedule[i].sensor == this.sensorWithMostTimeLeft)
-                basic.showNumber(this.sensorWithMostTimeLeft.getMeasurements())
+                basic.showNumber(this.sensorWithMostTimeLeft.measurements)
 
               // Make the datalogger log the data:
               const logAsCSV = this.schedule[i].sensor.log(currentTime)
@@ -150,7 +150,7 @@ namespace sensors {
 
               // Update schedule with when they should next be logged:
               if (this.schedule[i].sensor.hasMeasurements()) {
-                this.schedule[i].waitTime = nextLogTime + this.schedule[i].sensor.getPeriod()
+                this.schedule[i].waitTime = nextLogTime + this.schedule[i].sensor.period
               }
             }
           }
