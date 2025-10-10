@@ -51,7 +51,7 @@ namespace sensors {
     /** 0x141a6b8a */
     Distance = 0x141a6b8a,
     /** 0x169c9dc6 */
-    EC02 = 0x169c9dc6,
+    ECO2 = 0x169c9dc6,
     /** 0x1f1f7277 */
     ElectricalConductivity = 0x1f1f7277,
     /** 0x1f47c6c6 */
@@ -85,7 +85,7 @@ namespace sensors {
     /** 0x1421bac7 */
     Temperature = 0x1421bac7,
     /** 0x12a5b597 */
-    V0C = 0x12a5b597,
+    TVOC = 0x12a5b597,
     /** 0x1f6e0d90 */
     UvIndex = 0x1f6e0d90,
     /** 0x147b62ed */
@@ -185,7 +185,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["pH", "pH"],
       error: 0.1,
-      stateFormat: "u0.16"
+      stateFormat: "u4.12"
     },
     [JacdacSensorSrvs.AirPressure]: { // 0x1e117cea
       name: "JacdacAirPressure",
@@ -195,7 +195,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["hectopascals", "hPa"],
       error: 1.5,
-      stateFormat: "u0.16"
+      stateFormat: "u22.10"
     },
     [JacdacSensorSrvs.Button]: { // 0x1473a263
       name: "JacdacButton",
@@ -215,7 +215,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["Degrees", "°"],
       error: 1, // Heading error,
-      stateFormat: "u0.16"
+      stateFormat: "u16.16"
     },
     [JacdacSensorSrvs.DcCurrent]: { // 0x1912c8ae
       name: "JacdacDcCurrent",
@@ -225,7 +225,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["Amps", "A"], // Simulator uses a scale from 0 to 1000mA though.
       error: 0, // This returns ? on the simulator. It's also dependent on the reading I believe.
-      stateFormat: "u0.16"
+      stateFormat: "f64"
     },
     [JacdacSensorSrvs.DcVoltage]: { // 0x1633ac19
       name: "JacdacDcVoltage",
@@ -245,9 +245,9 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["Meters", "m"],
       error: 0, // This returns ? on the simulator.
-      stateFormat: "u0.16"
+      stateFormat: "u16.16"
     },
-    [JacdacSensorSrvs.EC02]: { // 0x169c9dc6
+    [JacdacSensorSrvs.ECO2]: { // 0x169c9dc6
       name: "JacdacECO2",
       rName: "JDEC02",
       min: 400,
@@ -255,7 +255,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["parts-per-million", "ppm"],
       error: 0, // This returns ? on the simulator.
-      stateFormat: "u0.16"
+      stateFormat: "u22.10"
     },
     [JacdacSensorSrvs.ElectricalConductivity]: { // 0x1f1f7277
       name: "JacdacElectricalConductivity",
@@ -265,17 +265,18 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["Microsiemens per centimeter", "uS/cm"],
       error: 10,
-      stateFormat: "u0.16"
+      stateFormat: "u22.10"
+
     },
     [JacdacSensorSrvs.Flex]: { // 0x1f47c6c6
       name: "JacdacFlex",
       rName: "JDF",
-      min: -100,
-      max: 100,
+      min: -1,
+      max: 1,
       typeOfReadingRegister: "number",
       units: ["percent", "%"],
       error: 0, // None stated
-      stateFormat: "u0.16"
+      stateFormat: "i1.15"
     },
     [JacdacSensorSrvs.HeartRate]: { // 0x166c6dc4
       name: "JacdacHeartRate",
@@ -285,7 +286,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["beats per minute", "bpm"],
       error: 0, // None stated
-      stateFormat: "u0.16"
+      stateFormat: "u16.16"
     },
     [JacdacSensorSrvs.Humidity]: { // 0x16c810b8
       name: "JacdacHumidity",
@@ -295,7 +296,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["relative humidity", "%RH"],
       error: 0.1,
-      stateFormat: "u0.16"
+      stateFormat: "u22.10"
     },
     [JacdacSensorSrvs.Illuminance]: { // 0x1e6ecaf2
       name: "JacdacIlluminance",
@@ -305,7 +306,8 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["lux", "lx"],
       error: 0, // None stated
-      stateFormat: "u0.16"
+      stateFormat: "u22.10"
+
     },
     [JacdacSensorSrvs.LightLevel]: { // 0x17dc9a1c
       name: "JacdacLightLevel",
@@ -320,18 +322,18 @@ namespace sensors {
     [JacdacSensorSrvs.MagneticField]: { // 0x12fe180f
       name: "JacdacMagneticField",
       rName: "JDMF",
-      min: -100,
-      max: 100,
+      min: -1,
+      max: 1,
       typeOfReadingRegister: "number",
       units: ["percent", "%"],
       error: 0, // None stated
-      stateFormat: "u0.16"
+      stateFormat: "i1.15"
     },
     [JacdacSensorSrvs.Potentiometer]: { // 0x1f274746
       name: "JacdacPotentiometer",
       rName: "JDP",
       min: 0,
-      max: 100,
+      max: 1,
       typeOfReadingRegister: "number",
       units: ["percent", "%"],
       error: 0, // None stated
@@ -345,7 +347,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["percent", "%"],
       error: 0, // None stated
-      stateFormat: "u0.16"
+      stateFormat: "u8.8"
     },
     [JacdacSensorSrvs.RainGauge]: { // 0x13734c95
       name: "JacdacRainGauge",
@@ -355,7 +357,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["millimeters", "mm"],
       error: 0, // None stated
-      stateFormat: "u0.16"
+      stateFormat: "u16.16"
     },
     [JacdacSensorSrvs.RotaryEncoder]: { // 0x10fa29c9
       name: "JacdacRotaryEncoder",
@@ -365,7 +367,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["", ""],
       error: 0, // None stated
-      stateFormat: "u0.16"
+      stateFormat: "i32"
     },
     [JacdacSensorSrvs.RotationsPerMinute]: { // 0x19f8e291
       name: "JacdacRotationsPerMinute",
@@ -375,7 +377,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["rotations per minute", "rpm"],
       error: 0, // None stated
-      stateFormat: "u0.16"
+      stateFormat: "i24.8"
     },
     [JacdacSensorSrvs.Servo]: { // 0x12fc9103
       name: "JacdacServo",
@@ -385,7 +387,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["Degrees", "°"],
       error: 0, // None stated
-      stateFormat: "u0.16"
+      stateFormat: "i16.16"
     },
     [JacdacSensorSrvs.SoilMoisture]: { // 0x1d4aa3b3
       name: "JacdacSoilMoisture",
@@ -415,9 +417,9 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["Degrees celcius", "°C"],
       error: 0.25,
-      stateFormat: "u0.16"
+      stateFormat: "i22.10"
     },
-    [JacdacSensorSrvs.V0C]: { // 0x12a5b597
+    [JacdacSensorSrvs.TVOC]: { // 0x12a5b597
       name: "JacdactVOC",
       rName: "JDV0C",
       min: 0, // This is ?
@@ -425,7 +427,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["parts per billion", "ppb"],
       error: 0, // This is ?
-      stateFormat: "u0.16"
+      stateFormat: "u22.10"
     },
     [JacdacSensorSrvs.UvIndex]: { // 0x1f6e0d90
       name: "JacdacUvIndex",
@@ -435,7 +437,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["Ultraviolet index", "uv"],
       error: 0, // This is ?
-      stateFormat: "u0.16"
+      stateFormat: "u16.16"
     },
     [JacdacSensorSrvs.Waterlevel]: { // 0x147b62ed
       name: "JacdacWaterLevel",
@@ -455,7 +457,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["kilograms", "kg"],
       error: 0, // This is ?
-      stateFormat: "u0.16"
+      stateFormat: "u16.16"
     },
     [JacdacSensorSrvs.WindDirection]: { // 0x186be92b
       name: "JacdacWindDirection",
@@ -465,7 +467,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["Degrees", "°"],
       error: 5,
-      stateFormat: "u0.16"
+      stateFormat: "u16"
     },
     [JacdacSensorSrvs.WindSpeed]: { // 0x1b591bbf
       name: "JacdacWindSpeed",
@@ -475,7 +477,7 @@ namespace sensors {
       typeOfReadingRegister: "number",
       units: ["meters per second", "m/s"],
       error: 2,
-      stateFormat: "u0.16"
+      stateFormat: "u16.16"
     }
   }
 }
