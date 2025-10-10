@@ -85,6 +85,8 @@ namespace sensors {
         sensorFn: () => input.acceleration(Dimension.X),
         min: -2048,
         max: 2048,
+        units: ["milli-g", "mg"],
+        error: 0,
         setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
       });
 
@@ -95,6 +97,8 @@ namespace sensors {
         sensorFn: () => input.acceleration(Dimension.Y),
         min: -2048,
         max: 2048,
+        units: ["milli-g", "mg"],
+        error: 0,
         setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
       });
 
@@ -105,6 +109,8 @@ namespace sensors {
         sensorFn: () => input.acceleration(Dimension.Z),
         min: -2048,
         max: 2048,
+        units: ["milli-g", "mg"],
+        error: 0,
         setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
       });
 
@@ -115,6 +121,8 @@ namespace sensors {
         sensorFn: () => input.rotation(Rotation.Pitch),
         min: -180,
         max: 180,
+        units: ["", ""],
+        error: 0,
       });
 
     else if (name == "roll" || name == "r")
@@ -124,6 +132,8 @@ namespace sensors {
         sensorFn: () => input.rotation(Rotation.Roll),
         min: -180,
         max: 180,
+        units: ["", ""],
+        error: 0,
       });
 
     else if (name == "a. pin 0" || name == "analog pin 0" || name == "ap0")
@@ -133,6 +143,8 @@ namespace sensors {
         sensorFn: () => pins.analogReadPin(AnalogPin.P0) / 340,
         min: 0,
         max: 3,
+        units: ["", ""],
+        error: 0,
       });
 
     else if (name == "a. pin 1" || name == "analog pin 1" || name == "ap1")
@@ -142,6 +154,8 @@ namespace sensors {
         sensorFn: () => pins.analogReadPin(AnalogPin.P1) / 340,
         min: 0,
         max: 3,
+        units: ["", ""],
+        error: 0,
       });
 
     else if (name == "a. pin 2" || name == "analog pin 2" || name == "ap2")
@@ -151,6 +165,8 @@ namespace sensors {
         sensorFn: () => pins.analogReadPin(AnalogPin.P2) / 340,
         min: 0,
         max: 3,
+        units: ["", ""],
+        error: 0,
       });
 
     else if (name == "light" || name == "l")
@@ -160,6 +176,8 @@ namespace sensors {
         sensorFn: () => input.lightLevel(),
         min: 0,
         max: 255,
+        units: ["", ""],
+        error: 0,
       });
 
     else if (name == "temp." || name == "temperature" || name == "t")
@@ -169,6 +187,8 @@ namespace sensors {
         sensorFn: () => input.temperature(),
         min: -40,
         max: 100,
+        units: ["", ""],
+        error: 0,
       });
 
     else if (name == "magnet" || name == "m")
@@ -178,6 +198,8 @@ namespace sensors {
         sensorFn: () => input.magneticForce(Dimension.Strength),
         min: -5000,
         max: 5000,
+        units: ["", ""],
+        error: 0,
       });
 
     else if (name == "logo pressed" || name == "logo press" || name == "lp")
@@ -187,6 +209,8 @@ namespace sensors {
         sensorFn: () => (input.logoIsPressed() ? 1 : 0),
         min: 0,
         max: 1,
+        units: ["", ""],
+        error: 0,
       });
 
     else if (name == "volume" || name == "microphone" || name == "v")
@@ -196,6 +220,8 @@ namespace sensors {
         sensorFn: () => input.soundLevel(),
         min: 0,
         max: 255,
+        units: ["", ""],
+        error: 0,
       });
 
     else if (name == "compass" || name == "c")
@@ -205,6 +231,8 @@ namespace sensors {
         sensorFn: () => input.compassHeading(),
         min: 0,
         max: 360,
+        units: ["", ""],
+        error: 0,
       });
     else
       throw "Error: Couldn't find micro:bit sensor: '" + name + "'"
@@ -229,6 +257,12 @@ namespace sensors {
     private readonly sensorFn: () => number;
     /** Immutable: Need to know whether or not this sensor is on the microbit or is an external Jacdac one; see sensorSelection.ts */
     public readonly isJacdacSensor: boolean;
+    /** Immutable: "percent", "pH", "hectopascals". Is "" where not applicable. */
+    public readonly unitName: string;
+    /** Immutable: Examples: "%", "pH", "hPa". Is "" where not applicable.  */
+    public readonly unitSymbol: string;
+    /** Immutable: The + or - error for the sensor. This is 0 where it is not-stated or known. */
+    public readonly readingError: number;
 
     /** Set by .setConfig() */
     public totalMeasurements: number
@@ -279,6 +313,8 @@ namespace sensors {
       sensorFn: () => number,
       min: number,
       max: number,
+      units?: string[],
+      error?: number,
       isJacdacSensor?: boolean,
       setupFn?: () => void
     }) {
@@ -298,11 +334,14 @@ namespace sensors {
       this.minimum = opts.min
       this.maximum = opts.max
       this.range = this.maximum - this.minimum
+      this.unitName = (opts.units && opts.units[0]) ? opts.units[0] : ""
+      this.unitSymbol = (opts.units && opts.units[1]) ? opts.units[1] : ""
+      this.readingError = (opts.error) ? opts.error : 0
       this.sensorFn = opts.sensorFn
-      this.isJacdacSensor = (opts.isJacdacSensor == undefined) ? false : opts.isJacdacSensor
+      this.isJacdacSensor = (opts.isJacdacSensor) ? opts.isJacdacSensor : false
 
       // There could be additional functions required to set up the sensor (see Jacdac modules or Accelerometers):
-      if (opts.setupFn != null)
+      if (opts.setupFn)
         opts.setupFn();
     }
 
@@ -316,10 +355,14 @@ namespace sensors {
     public get normalisedReading(): number { return (this.reading - this.minimum) / this.range }
     public get period(): number { return this.config.period; }
     public get measurements(): number { return this.config.measurements }
+
+    /** Should be the same as .normalisedBufferLength() */
+    public get bufferLength(): number { return this.dataBuffer.length }
+    /** Should be the same as .bufferLength() */
+    public get normalisedBufferLength(): number { return this.normalisedDataBuffer.length }
     public getMaxBufferSize(): number { return this.maxBufferSize }
     public getNthReading(n: number): number { return this.dataBuffer[n] }
     public getNthNormalisedReading(n: number): number { return this.normalisedDataBuffer[n] }
-    public getBufferLength(): number { return this.dataBuffer.length }
     public getNormalisedBufferLength(): number { return this.normalisedDataBuffer.length }
     public hasMeasurements(): boolean { return this.config.measurements > 0; }
 
