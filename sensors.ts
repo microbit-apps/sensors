@@ -76,178 +76,214 @@ namespace sensors {
     return { measurements: undefined, period: undefined, inequality, comparator }
   }
 
+
+  /**
+  * List of all Microbit sensors.
+  */
+  export enum MicrobitSensors {
+    AccelerometerX,
+    AccelerometerY,
+    AccelerometerZ,
+    Pitch,
+    Roll,
+    AnalogPin0,
+    AnalogPin1,
+    AnalogPin2,
+    Light,
+    Temperature,
+    Magnetometer,
+    Logo,
+    Volume,
+    Compass
+  }
+
   /**
    * Factory function used to generate a Sensor from that sensors: .getName(), sensorSelect name, or its radio name
-   * Throws an error if the name isn't recognised.
+   * Throws an error if the enum value isn't recognised.
    * This is a single factory within this abstract class to reduce binary size
-   * @param name (case insensitive) is either sensor.getName(), sensor.getRadioName() or the ariaID the button that represents the sensor in SensorSelect uses.
+   * @param sensor is a value from the enum MicrobitSensors
    * @returns concrete sensor that the input name corresponds to, throws an error if not-defined.
    */
   //% group="Sensors"
   //% blockId=sensors_get_microbit_sensor
-  //% block="get a microbit sensor from |name $name"
+  //% block="get a microbit sensor from |MicrobitSensors $sensor"
   //% weight=98
-  export function getMicrobitSensor(name: string): Sensor {
-    name = name.toLowerCase();
+  export function getMicrobitSensor(sensor: MicrobitSensors): Sensor {
+    switch (sensor) {
+      case (MicrobitSensors.AccelerometerX): {
+        return new Sensor({
+          name: "Accel. X",
+          rName: "AX",
+          sensorFn: () => input.acceleration(Dimension.X),
+          min: -2048,
+          max: 2048,
+          units: ["milli-g", "mg"],
+          error: 0,
+          setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
+        });
+      }
 
-    if (name == "accel. x" || name == "accelerometer x" || name == "ax")
-      return new Sensor({
-        name: "Accel. X",
-        rName: "AX",
-        sensorFn: () => input.acceleration(Dimension.X),
-        min: -2048,
-        max: 2048,
-        units: ["milli-g", "mg"],
-        error: 0,
-        setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
-      });
+      case (MicrobitSensors.AccelerometerY): {
+        return new Sensor({
+          name: "Accel. Y",
+          rName: "AY",
+          sensorFn: () => input.acceleration(Dimension.Y),
+          min: -2048,
+          max: 2048,
+          units: ["milli-g", "mg"],
+          error: 0,
+          setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
+        });
+      }
 
-    else if (name == "accel. y" || name == "accelerometer y" || name == "ay")
-      return new Sensor({
-        name: "Accel. Y",
-        rName: "AY",
-        sensorFn: () => input.acceleration(Dimension.Y),
-        min: -2048,
-        max: 2048,
-        units: ["milli-g", "mg"],
-        error: 0,
-        setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
-      });
+      case (MicrobitSensors.AccelerometerZ): {
+        return new Sensor({
+          name: "Accel. Z",
+          rName: "AZ",
+          sensorFn: () => input.acceleration(Dimension.Z),
+          min: -2048,
+          max: 2048,
+          units: ["milli-g", "mg"],
+          error: 0,
+          setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
+        });
+      }
 
-    else if (name == "accel. z" || name == "accelerometer z" || name == "az")
-      return new Sensor({
-        name: "Accel. Z",
-        rName: "AZ",
-        sensorFn: () => input.acceleration(Dimension.Z),
-        min: -2048,
-        max: 2048,
-        units: ["milli-g", "mg"],
-        error: 0,
-        setupFn: () => input.setAccelerometerRange(AcceleratorRange.OneG)
-      });
+      case (MicrobitSensors.Pitch): {
+        return new Sensor({
+          name: "Pitch",
+          rName: "P",
+          sensorFn: () => input.rotation(Rotation.Pitch),
+          min: -180,
+          max: 180,
+          units: ["", ""],
+          error: 0,
+        });
+      }
 
-    else if (name == "pitch" || name == "p")
-      return new Sensor({
-        name: "Pitch",
-        rName: "P",
-        sensorFn: () => input.rotation(Rotation.Pitch),
-        min: -180,
-        max: 180,
-        units: ["", ""],
-        error: 0,
-      });
+      case (MicrobitSensors.Roll): {
+        return new Sensor({
+          name: "Roll",
+          rName: "R",
+          sensorFn: () => input.rotation(Rotation.Roll),
+          min: -180,
+          max: 180,
+          units: ["", ""],
+          error: 0,
+        });
+      }
 
-    else if (name == "roll" || name == "r")
-      return new Sensor({
-        name: "Roll",
-        rName: "R",
-        sensorFn: () => input.rotation(Rotation.Roll),
-        min: -180,
-        max: 180,
-        units: ["", ""],
-        error: 0,
-      });
+      case (MicrobitSensors.AnalogPin0): {
+        return new Sensor({
+          name: "A. Pin 0",
+          rName: "AP0",
+          sensorFn: () => pins.analogReadPin(AnalogPin.P0) / 340,
+          min: 0,
+          max: 3,
+          units: ["Volts", "V"],
+          error: 0,
+        });
+      }
 
-    else if (name == "a. pin 0" || name == "analog pin 0" || name == "ap0")
-      return new Sensor({
-        name: "A. Pin 0",
-        rName: "AP0",
-        sensorFn: () => pins.analogReadPin(AnalogPin.P0) / 340,
-        min: 0,
-        max: 3,
-        units: ["Volts", "V"],
-        error: 0,
-      });
+      case (MicrobitSensors.AnalogPin1): {
+        return new Sensor({
+          name: "A. Pin 1",
+          rName: "AP1",
+          sensorFn: () => pins.analogReadPin(AnalogPin.P1) / 340,
+          min: 0,
+          max: 3,
+          units: ["Volts", "V"],
+          error: 0,
+        });
+      }
 
-    else if (name == "a. pin 1" || name == "analog pin 1" || name == "ap1")
-      return new Sensor({
-        name: "A. Pin 1",
-        rName: "AP1",
-        sensorFn: () => pins.analogReadPin(AnalogPin.P1) / 340,
-        min: 0,
-        max: 3,
-        units: ["Volts", "V"],
-        error: 0,
-      });
 
-    else if (name == "a. pin 2" || name == "analog pin 2" || name == "ap2")
-      return new Sensor({
-        name: "A. Pin 2",
-        rName: "AP2",
-        sensorFn: () => pins.analogReadPin(AnalogPin.P2) / 340,
-        min: 0,
-        max: 3,
-        units: ["Volts", "V"],
-        error: 0,
-      });
+      case (MicrobitSensors.AnalogPin2): {
+        return new Sensor({
+          name: "A. Pin 2",
+          rName: "AP2",
+          sensorFn: () => pins.analogReadPin(AnalogPin.P2) / 340,
+          min: 0,
+          max: 3,
+          units: ["Volts", "V"],
+          error: 0,
+        });
+      }
 
-    else if (name == "light" || name == "l")
-      return new Sensor({
-        name: "Light",
-        rName: "L",
-        sensorFn: () => input.lightLevel(),
-        min: 0,
-        max: 255,
-        units: ["Volts", "V"],
-        error: 0,
-      });
+      case (MicrobitSensors.Light): {
+        return new Sensor({
+          name: "Light",
+          rName: "L",
+          sensorFn: () => input.lightLevel(),
+          min: 0,
+          max: 255,
+          units: ["Volts", "V"],
+          error: 0,
+        });
+      }
 
-    else if (name == "temp." || name == "temperature" || name == "t")
-      return new Sensor({
-        name: "Temp.",
-        rName: "T",
-        sensorFn: () => input.temperature(),
-        min: -40,
-        max: 100,
-        units: ["Degrees celcius", "°C"],
-        error: 0,
-      });
+      case (MicrobitSensors.Temperature): {
+        return new Sensor({
+          name: "Temp.",
+          rName: "T",
+          sensorFn: () => input.temperature(),
+          min: -40,
+          max: 100,
+          units: ["Degrees celcius", "°C"],
+          error: 0,
+        });
+      }
 
-    else if (name == "magnet" || name == "m")
-      return new Sensor({
-        name: "Magnet",
-        rName: "M",
-        sensorFn: () => input.magneticForce(Dimension.Strength),
-        min: -5000,
-        max: 5000,
-        units: ["", ""],
-        error: 0,
-      });
+      case (MicrobitSensors.Magnetometer): {
+        return new Sensor({
+          name: "Magnet",
+          rName: "M",
+          sensorFn: () => input.magneticForce(Dimension.Strength),
+          min: -5000,
+          max: 5000,
+          units: ["", ""],
+          error: 0,
+        });
+      }
 
-    else if (name == "logo pressed" || name == "logo press" || name == "lp")
-      return new Sensor({
-        name: "Logo Press",
-        rName: "LP",
-        sensorFn: () => (input.logoIsPressed() ? 1 : 0),
-        min: 0,
-        max: 1,
-        units: ["", ""],
-        error: 0,
-      });
+      case (MicrobitSensors.Logo): {
+        return new Sensor({
+          name: "Logo Press",
+          rName: "LP",
+          sensorFn: () => (input.logoIsPressed() ? 1 : 0),
+          min: 0,
+          max: 1,
+          units: ["", ""],
+          error: 0,
+        });
+      }
 
-    else if (name == "volume" || name == "microphone" || name == "v")
-      return new Sensor({
-        name: "Microphone",
-        rName: "V",
-        sensorFn: () => input.soundLevel(),
-        min: 0,
-        max: 255,
-        units: ["Volume", "db"], //TODO:Check this...
-        error: 0,
-      });
+      case (MicrobitSensors.Volume): {
+        return new Sensor({
+          name: "Microphone",
+          rName: "V",
+          sensorFn: () => input.soundLevel(),
+          min: 0,
+          max: 255,
+          units: ["Volume", "db"], //TODO:Check this...
+          error: 0,
+        });
+      }
 
-    else if (name == "compass" || name == "c")
-      return new Sensor({
-        name: "Compass",
-        rName: "C",
-        sensorFn: () => input.compassHeading(),
-        min: 0,
-        max: 360,
-        units: ["Degrees", "°"],
-        error: 0,
-      });
-    else
-      throw "Error: Couldn't find micro:bit sensor: '" + name + "'"
+      case (MicrobitSensors.Compass): {
+        return new Sensor({
+          name: "Compass",
+          rName: "C",
+          sensorFn: () => input.compassHeading(),
+          min: 0,
+          max: 360,
+          units: ["Degrees", "°"],
+          error: 0,
+        });
+      }
+      default:
+        throw "Error: Couldn't build sensor. Passed value '" + sensor + "' doesn't exist on MicrobitSensors enum."
+    }
   }
 
   /**
@@ -364,7 +400,7 @@ namespace sensors {
       const inequality = this.config.inequality
       const comparator = this.config.comparator
 
-      if (inequality != undefined && !comparator != undefined)
+      if (inequality == undefined || comparator == undefined)
         throw "eventShouldTrigger: incomplete config: no inequality nor comparator provided: use .setRecordingConfig before calling this fn"
 
       switch (inequality) {
