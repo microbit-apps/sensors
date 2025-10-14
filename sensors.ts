@@ -23,7 +23,14 @@ namespace sensors {
    *      The only sensors that are incompatible with this are Buttons
    * The following code may be generalised to support them though.
    */
-  export const sensorEventSymbols = ["=", ">", "<", ">=", "<="]
+  enum sensorEventSymbols {
+    EQUALS = "=",
+    NOT_EQUALS = "!=",
+    GREATER = ">",
+    LESSER = "<",
+    GREATER_OR_EQ = ">=",
+    LESSER_OR_EQ = "<="
+  }
 
   /**
    * Type for value bound to inequality key within sensorEventFunctionLookup
@@ -44,7 +51,7 @@ namespace sensors {
   }
 
   /** To what precision should readings from the sensor be truncated to when they're logged? */
-  const READING_PRECISION: number = 9
+  const READING_PRECISION: number = 8
 
 
   //---------------------------------------------------------------
@@ -345,6 +352,60 @@ namespace sensors {
         opts.setupFn();
     }
 
+    private eventShouldTrigger(reading: number): boolean {
+      if (!this.config)
+        throw "eventShouldTrigger: no config: use .setRecordingConfig before calling this fn"
+
+      const inequality = this.config.inequality
+      const comparator = this.config.comparator
+
+      if (!inequality || !comparator)
+        throw "eventShouldTrigger: incomplete config: no inequality nor comparator provided: use .setRecordingConfig before calling this fn"
+
+      switch (inequality) {
+        case sensorEventSymbols.EQUALS: {
+          if (reading == comparator)
+            return true;
+          break;
+        }
+
+        case sensorEventSymbols.NOT_EQUALS: {
+          if (reading != comparator)
+            return true;
+          break;
+        }
+
+        case sensorEventSymbols.GREATER: {
+          if (reading > comparator)
+            return true;
+          break;
+        }
+
+        case sensorEventSymbols.LESSER: {
+          if (reading < comparator)
+            return true;
+          break;
+        }
+        case sensorEventSymbols.GREATER_OR_EQ: {
+          if (reading >= comparator)
+            return true;
+          break;
+        }
+
+        case sensorEventSymbols.LESSER_OR_EQ: {
+          if (reading <= comparator)
+            return true;
+          break;
+        }
+        
+        default: {
+          throw "eventShouldTrigger: default: unrecognised sensorEventSymbol: '" + comparator + "'"
+        }
+      }
+
+      return false;
+    }
+
     //---------------------
     // Interface Functions:
     //---------------------
@@ -360,9 +421,17 @@ namespace sensors {
     get bufferLength(): number { return this.dataBuffer.length }
     /** Should be the same as .bufferLength() */
     get normalisedBufferLength(): number { return this.normalisedDataBuffer.length }
-    get formattedReading(): string { return this.reading + " " + this.unitSymbol }
-    get formattedNormalisedReading(): string { return this.normalisedReading + " " + this.unitSymbol }
 
+
+    public formatReading(reading?: number): string {
+      reading = (reading) ? reading : this.reading;
+      return this.reading + " " + this.unitSymbol
+    }
+
+    public formatNormalisedReading(reading?: number): string {
+      reading = (reading) ? reading : this.reading;
+      return this.normalisedReading + " " + this.unitSymbol
+    }
 
     public getMaxBufferSize(): number { return this.maxBufferSize }
     public getNthReading(n: number): number { return this.dataBuffer[n] }
@@ -370,7 +439,7 @@ namespace sensors {
     public getNormalisedBufferLength(): number { return this.normalisedDataBuffer.length }
     public hasMeasurements(): boolean { return this.config.measurements > 0; }
 
-    public showReading(): void { basic.showString(this.formattedReading) }
+    public showReading(truncatedTo: number = READING_PRECISION): void { basic.showString(this.formatReading().slice(0, truncatedTo)) }
 
 
     /**
@@ -520,6 +589,26 @@ namespace sensors {
         return this.radioName + "," + time.toString() + "," + reading + "," + "N/A"
       }
       return ""
+    }
+
+    public raiseEventWhen(waitTimeMs: number, cb: (fmtReading: string) => void) {
+      if (!this.config)
+        throw "raiseEventWhen: no config: use .setRecordingConfig before calling this fn"
+
+      let reading: number;
+      let time: number = 0;
+
+      while (true) {
+        reading = this.reading;
+
+        if (this.eventShouldTrigger(reading))
+          break;
+
+          time += waitTimeMs;
+        basic.pause(waitTimeMs);
+      }
+
+      cb(this.formatReading(reading))
     }
   }
 }
