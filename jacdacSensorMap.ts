@@ -204,7 +204,7 @@ namespace sensors {
       name: "JacdacButton",
       rName: "JDB",
       min: 0,
-      max: 100,
+      max: 0.99,
       typeOfReadingRegister: "number",
       units: ["", ""],
       error: 0, // Bouncing, etc not accounted for.

@@ -23,14 +23,7 @@ namespace sensors {
    *      The only sensors that are incompatible with this are Buttons
    * The following code may be generalised to support them though.
    */
-  enum sensorEventSymbols {
-    EQUALS = "=",
-    NOT_EQUALS = "!=",
-    GREATER = ">",
-    LESSER = "<",
-    GREATER_OR_EQ = ">=",
-    LESSER_OR_EQ = "<="
-  }
+  export const sensorEventSymbols = ["=", ">", "<", ">=", "<="]
 
   /**
    * Type for value bound to inequality key within sensorEventFunctionLookup
@@ -52,7 +45,8 @@ namespace sensors {
 
   /** To what precision should readings from the sensor be truncated to when they're logged? */
   const READING_PRECISION: number = 8
-
+  /** When checking if an even has triggered. How long should the sensor wait between measurements? */
+  const EVENT_POLLING_RATE_MS: number = 5
 
   //---------------------------------------------------------------
   // Factory Functions:
@@ -69,6 +63,17 @@ namespace sensors {
   //% weight=99
   export function recordingConfig(measurements: number, period: number, inequality?: string, comparator?: number): RecordingConfig {
     return { measurements, period, inequality, comparator }
+  }
+
+  /**
+  *
+  */
+  //% group="Sensors"
+  //% blockId=sensors_event_only_recording_config
+  //% block="Recording information for sensor logging |inequality $inequality |comparator $comparator"
+  //% weight=99
+  export function eventOnlyRecordingConfig(inequality: string, comparator: number): RecordingConfig {
+    return { measurements: undefined, period: undefined, inequality, comparator }
   }
 
   /**
@@ -359,45 +364,45 @@ namespace sensors {
       const inequality = this.config.inequality
       const comparator = this.config.comparator
 
-      if (!inequality || !comparator)
+      if (inequality != undefined && !comparator != undefined)
         throw "eventShouldTrigger: incomplete config: no inequality nor comparator provided: use .setRecordingConfig before calling this fn"
 
       switch (inequality) {
-        case sensorEventSymbols.EQUALS: {
+        case "=": {
           if (reading == comparator)
             return true;
           break;
         }
 
-        case sensorEventSymbols.NOT_EQUALS: {
+        case "!=": {
           if (reading != comparator)
             return true;
           break;
         }
 
-        case sensorEventSymbols.GREATER: {
+        case ">": {
           if (reading > comparator)
             return true;
           break;
         }
 
-        case sensorEventSymbols.LESSER: {
+        case "<": {
           if (reading < comparator)
             return true;
           break;
         }
-        case sensorEventSymbols.GREATER_OR_EQ: {
+        case ">=": {
           if (reading >= comparator)
             return true;
           break;
         }
 
-        case sensorEventSymbols.LESSER_OR_EQ: {
+        case "<=": {
           if (reading <= comparator)
             return true;
           break;
         }
-        
+
         default: {
           throw "eventShouldTrigger: default: unrecognised sensorEventSymbol: '" + comparator + "'"
         }
@@ -591,24 +596,30 @@ namespace sensors {
       return ""
     }
 
-    public raiseEventWhen(waitTimeMs: number, cb: (fmtReading: string) => void) {
+
+    /**
+    * asynchronously wait for the event, as detailed in config, to occur.
+    * runs control.inBackground()
+    * The cb is also invoked inBackground.
+    */
+    public onEvent(eventCb: (fmtReading: string) => void, config?: RecordingConfig) {
+      if (config)
+        this.setConfig(config)
+
       if (!this.config)
         throw "raiseEventWhen: no config: use .setRecordingConfig before calling this fn"
 
       let reading: number;
-      let time: number = 0;
+      control.inBackground(() => {
+        while (true) {
+          reading = this.reading;
 
-      while (true) {
-        reading = this.reading;
-
-        if (this.eventShouldTrigger(reading))
-          break;
-
-          time += waitTimeMs;
-        basic.pause(waitTimeMs);
-      }
-
-      cb(this.formatReading(reading))
+          if (this.eventShouldTrigger(reading))
+            break;
+          basic.pause(EVENT_POLLING_RATE_MS);
+        }
+        eventCb(this.formatReading(reading))
+      })
     }
   }
 }
