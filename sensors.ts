@@ -143,7 +143,7 @@ namespace sensors {
         sensorFn: () => pins.analogReadPin(AnalogPin.P0) / 340,
         min: 0,
         max: 3,
-        units: ["", ""],
+        units: ["Volts", "V"],
         error: 0,
       });
 
@@ -154,7 +154,7 @@ namespace sensors {
         sensorFn: () => pins.analogReadPin(AnalogPin.P1) / 340,
         min: 0,
         max: 3,
-        units: ["", ""],
+        units: ["Volts", "V"],
         error: 0,
       });
 
@@ -165,7 +165,7 @@ namespace sensors {
         sensorFn: () => pins.analogReadPin(AnalogPin.P2) / 340,
         min: 0,
         max: 3,
-        units: ["", ""],
+        units: ["Volts", "V"],
         error: 0,
       });
 
@@ -176,7 +176,7 @@ namespace sensors {
         sensorFn: () => input.lightLevel(),
         min: 0,
         max: 255,
-        units: ["", ""],
+        units: ["Volts", "V"],
         error: 0,
       });
 
@@ -187,7 +187,7 @@ namespace sensors {
         sensorFn: () => input.temperature(),
         min: -40,
         max: 100,
-        units: ["", ""],
+        units: ["Degrees celcius", "°C"],
         error: 0,
       });
 
@@ -220,7 +220,7 @@ namespace sensors {
         sensorFn: () => input.soundLevel(),
         min: 0,
         max: 255,
-        units: ["", ""],
+        units: ["Volume", "db"], //TODO:Check this...
         error: 0,
       });
 
@@ -231,7 +231,7 @@ namespace sensors {
         sensorFn: () => input.compassHeading(),
         min: 0,
         max: 360,
-        units: ["", ""],
+        units: ["Degrees", "°"],
         error: 0,
       });
     else
@@ -350,21 +350,28 @@ namespace sensors {
     //---------------------
 
     /** Latest value from the sensor. Does not change any buffered readings.*/
-    public get reading(): number { return this.sensorFn() }
+    get reading(): number { return this.sensorFn() }
     /** Latest value from the sensor. Normalised by this sensors minimum and maximum. Does not change any buffered readings.*/
-    public get normalisedReading(): number { return (this.reading - this.minimum) / this.range }
-    public get period(): number { return this.config.period; }
-    public get measurements(): number { return this.config.measurements }
+    get normalisedReading(): number { return (this.reading - this.minimum) / this.range }
+    get period(): number { return this.config.period; }
+    get measurements(): number { return this.config.measurements }
 
     /** Should be the same as .normalisedBufferLength() */
-    public get bufferLength(): number { return this.dataBuffer.length }
+    get bufferLength(): number { return this.dataBuffer.length }
     /** Should be the same as .bufferLength() */
-    public get normalisedBufferLength(): number { return this.normalisedDataBuffer.length }
+    get normalisedBufferLength(): number { return this.normalisedDataBuffer.length }
+    get formattedReading(): string { return this.reading + " " + this.unitSymbol }
+    get formattedNormalisedReading(): string { return this.normalisedReading + " " + this.unitSymbol }
+
+
     public getMaxBufferSize(): number { return this.maxBufferSize }
     public getNthReading(n: number): number { return this.dataBuffer[n] }
     public getNthNormalisedReading(n: number): number { return this.normalisedDataBuffer[n] }
     public getNormalisedBufferLength(): number { return this.normalisedDataBuffer.length }
     public hasMeasurements(): boolean { return this.config.measurements > 0; }
+
+    public showReading(): void { basic.showString(this.formattedReading) }
+
 
     /**
      * Used by the DataRecorder to display information about the sensor as it is logging.
