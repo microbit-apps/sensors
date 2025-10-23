@@ -485,5 +485,9 @@ namespace sensors {
     }
   }
 
+  export function listAllJacdacSensors(): JacdacSensorSrvs[] {
+    return Object.keys(__jacdacSensorMap).map(k => parseInt(k)) as JacdacSensorSrvs[];
+  }
+
   export const numberOfSupportedJacdacSensors: number = Object.keys(__jacdacSensorMap).length;
 }

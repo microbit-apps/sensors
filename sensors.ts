@@ -98,6 +98,25 @@ namespace sensors {
     Compass
   }
 
+  export function listAllMicrobitSensors(): MicrobitSensors[] {
+    return [
+      MicrobitSensors.AccelerometerX,
+      MicrobitSensors.AccelerometerY,
+      MicrobitSensors.AccelerometerZ,
+      MicrobitSensors.Pitch,
+      MicrobitSensors.Roll,
+      MicrobitSensors.AnalogPin0,
+      MicrobitSensors.AnalogPin1,
+      MicrobitSensors.AnalogPin2,
+      MicrobitSensors.Light,
+      MicrobitSensors.Temperature,
+      MicrobitSensors.Magnetometer,
+      MicrobitSensors.Logo,
+      MicrobitSensors.Volume,
+      MicrobitSensors.Compass
+    ];
+  }
+
   export const numberOfSupportedMicrobitSensors: number = 14; // Hard coded since can't reflect enum.
 
   /**
