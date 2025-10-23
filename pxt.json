@@ -1,6 +1,6 @@
 {
     "name": "sensors",
-    "version": "0.0.9",
+    "version": "q",
     "files": [
         "main.ts",
         "sensors.ts",
