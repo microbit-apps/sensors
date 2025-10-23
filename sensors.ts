@@ -16,6 +16,7 @@ namespace sensors {
     comparator?: number
   };
 
+
   /**
    * Used to lookup the implemented events via sensorEventFunctionLookup[]
    * 
@@ -96,6 +97,8 @@ namespace sensors {
     Volume,
     Compass
   }
+
+  export const numberOfSupportedMicrobitSensors: number = 14; // Hard coded since can't reflect enum.
 
   /**
    * Factory function used to generate a Sensor from that sensors: .getName(), sensorSelect name, or its radio name

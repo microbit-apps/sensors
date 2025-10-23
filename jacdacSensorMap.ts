@@ -174,6 +174,7 @@ namespace sensors {
     });
   }
 
+
   //------------------------------------
   // SimpleSensorsMap definition hereon:
   //------------------------------------
@@ -483,4 +484,6 @@ namespace sensors {
       stateFormat: "u16.16"
     }
   }
+
+  export const numberOfSupportedJacdacSensors: number = Object.keys(__jacdacSensorMap).length;
 }
