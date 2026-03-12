@@ -112,7 +112,7 @@ namespace sensors {
    * @param jdClient is a SimpleSensorClient, its .serviceClass is used to look up metadata about the sensor.
    * @returns A Sensor object that can be used like any other sensor in this library.
    */
-  //% block="Get a jacdac sensor |service class $srv |role name $roleName"
+  //% block="Get a jacdac sensor"
   //% weight=98
   export function getJacdacSensor(srv: JacdacSensorSrvs, roleName: string): Sensor {
     const s = __jacdacSensorMap[srv];

@@ -115,8 +115,7 @@ namespace sensors {
    * @param sensor is a value from the enum MicrobitSensors
    * @returns concrete sensor that the input name corresponds to, throws an error if not-defined.
    */
-  //% group="Sensors"
-  //% block="get a microbit sensor from |MicrobitSensors $sensor"
+  //% block="get a microbit sensor from"
   //% weight=99
   export function getMicrobitSensor(sensor: MicrobitSensors): Sensor {
     switch (sensor) {
