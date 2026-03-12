@@ -114,7 +114,7 @@ namespace sensors {
    */
   //% group="Sensors"
   //% block="Get a jacdac sensor |service class $srv |role name $roleName"
-  //% weight=97
+  //% weight=98
   export function getJacdacSensor(srv: JacdacSensorSrvs, roleName: string): Sensor {
     const s = __jacdacSensorMap[srv];
 
@@ -147,7 +147,7 @@ namespace sensors {
    */
   //% group="Sensors"
   //% block="Wrap a jacdac sensor |JDClient $jdClient"
-  //% weight=96
+  //% weight=97
   export function wrapJacdacSensor(jdClient: jacdac.SimpleSensorClient): Sensor {
     if (!jdClient) {
       throw "Please provide a Jacdac SimpleSensorClient object to wrap."

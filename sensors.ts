@@ -54,23 +54,15 @@ namespace sensors {
   // recordingConfig(), getMicrobitSensor() and wrapJacdacSensor()
   //---------------------------------------------------------------
 
-
-  /**
-  *
-  */
   //% group="Sensors"
   //% block="Recording information for sensor logging |measurements $measurements |period $period |inequality $inequality |comparator $comparator"
-  //% weight=99
+  //% weight=96
   export function recordingConfig(measurements: number, period: number, inequality?: string, comparator?: number): RecordingConfig {
     return { measurements, period, inequality, comparator }
   }
 
-  /**
-  *
-  */
-  //% group="Sensors"
   //% block="Recording information for sensor logging |inequality $inequality |comparator $comparator"
-  //% weight=99
+  //% weight=95
   export function eventOnlyRecordingConfig(inequality: string, comparator: number): RecordingConfig {
     return { measurements: undefined, period: undefined, inequality, comparator }
   }
@@ -126,7 +118,7 @@ namespace sensors {
    */
   //% group="Sensors"
   //% block="get a microbit sensor from |MicrobitSensors $sensor"
-  //% weight=98
+  //% weight=99
   export function getMicrobitSensor(sensor: MicrobitSensors): Sensor {
     switch (sensor) {
       case (MicrobitSensors.AccelerometerX): {
