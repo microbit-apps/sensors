@@ -49,9 +49,9 @@ namespace sensors {
   /** When checking if an even has triggered. How long should the sensor wait between measurements? */
   const EVENT_POLLING_RATE_MS: number = 5
 
-
-  // These should be shadows in the future, that are taken in some function like startLogging or startEvent.
-
+    /**
+     * These should be shadows in the future, that are taken in some function like startLogging or startEvent.
+     */
     //% block="take $measurements measurements in total, one every $period ms"
     //% measurements.defl=10
     //% period.defl=1000
@@ -61,6 +61,9 @@ namespace sensors {
         return { measurements, period}
     }
 
+    /**
+     * These should be shadows in the future, that are taken in some function like startLogging or startEvent.
+     */
     //% block="measure when $inequality $comparator"
     //% inequality.defl=">"
     //% comparator.defl=0
@@ -123,6 +126,7 @@ namespace sensors {
   //% block="Get microbit sensor $sensor"
   //% sensor.defl=MicrobitSensors.AccelerometerX
   //% blockSetVariable=mySensor
+  //% group="Get a sensor"
   //% weight=99
   export function getMicrobitSensor(sensor: MicrobitSensors): Sensor {
     switch (sensor) {
