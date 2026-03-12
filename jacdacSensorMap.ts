@@ -37,6 +37,7 @@ namespace sensors {
   */
   export enum JacdacSensorSrvs {
     /** 0x1e9778c5 */
+    //% block
     WaterAcidity = 0x1e9778c5,
     /** 0x1e117cea */
     AirPressure = 0x1e117cea,
@@ -112,7 +113,10 @@ namespace sensors {
    * @param jdClient is a SimpleSensorClient, its .serviceClass is used to look up metadata about the sensor.
    * @returns A Sensor object that can be used like any other sensor in this library.
    */
-  //% block="Get a jacdac sensor"
+  //% block="Get a jacdac sensor $srv and name it $roleName"
+  //% srv.defl=JacdacSensorSrvs.WaterAcidity
+  //% roleName.defl="jacdacSensor1"
+  //% blockSetVariable=mySensor
   //% weight=98
   export function getJacdacSensor(srv: JacdacSensorSrvs, roleName: string): Sensor {
     const s = __jacdacSensorMap[srv];
@@ -144,8 +148,6 @@ namespace sensors {
    * @param jdClient is a SimpleSensorClient, its .serviceClass is used to look up metadata about the sensor.
    * @returns A Sensor object that can be used like any other sensor in this library.
    */
-  //% block="Wrap a jacdac sensor"
-  //% weight=97
   export function wrapJacdacSensor(jdClient: jacdac.SimpleSensorClient): Sensor {
     if (!jdClient) {
       throw "Please provide a Jacdac SimpleSensorClient object to wrap."

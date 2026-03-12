@@ -29,7 +29,7 @@ namespace sensors {
   /**
    * Type for value bound to inequality key within sensorEventFunctionLookup
    * 
-   * One of these is optionally held by a sensor - see by sensor.setRecordingConfig
+   * One of these is optionally held by a sensor - see by sensor.setConfig
    */
   export type SensorEventFunction = (reading: number, comparator: number) => boolean
 
@@ -49,34 +49,33 @@ namespace sensors {
   /** When checking if an even has triggered. How long should the sensor wait between measurements? */
   const EVENT_POLLING_RATE_MS: number = 5
 
-  //---------------------------------------------------------------
-  // Factory Functions:
-  // recordingConfig(), getMicrobitSensor() and wrapJacdacSensor()
-  //---------------------------------------------------------------
 
-  //% block="Recording information for sensor logging measurements $measurements period in ms $period inequality $inequality |comparator $comparator"
-  //% measurements.defl=10
-  //% period.defl=1000
-  //% inequality.defl=">"
-  //% inequality.defl=0
-  //% weight=96
-  export function recordingConfig(measurements: number, period: number, inequality?: string, comparator?: number): RecordingConfig {
-    return { measurements, period, inequality, comparator }
-  }
+  // These should be shadows in the future, that are taken in some function like startLogging or startEvent.
 
-  //% block="Recording information for sensor logging inequality $inequality comparator $comparator"
-  //% inequality.defl=">"
-  //% inequality.defl=0
-  //% weight=95
-  export function eventOnlyRecordingConfig(inequality: string, comparator: number): RecordingConfig {
-    return { measurements: undefined, period: undefined, inequality, comparator }
-  }
+    //% block="take $measurements measurements in total, one every $period ms"
+    //% measurements.defl=10
+    //% period.defl=1000
+    //% group="Recording config"
+    //% weight=96
+    export function recordingConfig(measurements: number, period: number): RecordingConfig {
+        return { measurements, period}
+    }
+
+    //% block="measure when $inequality $comparator"
+    //% inequality.defl=">"
+    //% comparator.defl=0
+    //% group="Recording config"
+    //% weight=95
+    export function eventOnlyRecordingConfig(inequality: string, comparator: number): RecordingConfig {
+        return { measurements: undefined, period: undefined, inequality, comparator }
+    }
 
 
   /**
   * List of all Microbit sensors.
   */
   export enum MicrobitSensors {
+    //% block
     AccelerometerX,
     AccelerometerY,
     AccelerometerZ,
@@ -121,7 +120,9 @@ namespace sensors {
    * @param sensor is a value from the enum MicrobitSensors
    * @returns concrete sensor that the input name corresponds to, throws an error if not-defined.
    */
-  //% block="get a microbit sensor from"
+  //% block="Get microbit sensor $sensor"
+  //% sensor.defl=MicrobitSensors.AccelerometerX
+  //% blockSetVariable=mySensor
   //% weight=99
   export function getMicrobitSensor(sensor: MicrobitSensors): Sensor {
     switch (sensor) {
@@ -410,13 +411,13 @@ namespace sensors {
 
     private eventShouldTrigger(reading: number): boolean {
       if (!this.config)
-        throw "eventShouldTrigger: no config: use .setRecordingConfig before calling this fn"
+        throw "eventShouldTrigger: no config: use .setConfig before calling this fn"
 
       const inequality = this.config.inequality
       const comparator = this.config.comparator
 
       if (inequality == undefined || comparator == undefined)
-        throw "eventShouldTrigger: incomplete config: no inequality nor comparator provided: use .setRecordingConfig before calling this fn"
+        throw "eventShouldTrigger: incomplete config: no inequality nor comparator provided: use .setConfig before calling this fn"
 
       switch (inequality) {
         case "=": {
@@ -658,7 +659,7 @@ namespace sensors {
         this.setConfig(config)
 
       if (!this.config)
-        throw "raiseEventWhen: no config: use .setRecordingConfig before calling this fn"
+        throw "raiseEventWhen: no config: use .setConfig before calling this fn"
 
       let reading: number;
       control.inBackground(() => {
