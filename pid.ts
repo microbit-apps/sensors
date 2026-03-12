@@ -1,7 +1,6 @@
 namespace sensors {
   type PIDCallbackFn = (response: number) => void;
 
-  //% block="Loop"
   export function loop(
     sensors: Sensor[],
     targets: number[],

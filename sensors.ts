@@ -34,7 +34,7 @@ namespace sensors {
   export type SensorEventFunction = (reading: number, comparator: number) => boolean
 
   /** 
-   * Get aa function that performs that inequality check & logs it with an event description if the event has triggered.
+   * Get a function that performs that inequality check & logs it with an event description if the event has triggered.
    */
   export const sensorEventFunctionLookup: { [inequality: string]: SensorEventFunction } = {
     "=": function (reading: number, comparator: number) { return reading == comparator },
@@ -59,7 +59,6 @@ namespace sensors {
   *
   */
   //% group="Sensors"
-  //% blockId=sensors_recording_config
   //% block="Recording information for sensor logging |measurements $measurements |period $period |inequality $inequality |comparator $comparator"
   //% weight=99
   export function recordingConfig(measurements: number, period: number, inequality?: string, comparator?: number): RecordingConfig {
@@ -70,7 +69,6 @@ namespace sensors {
   *
   */
   //% group="Sensors"
-  //% blockId=sensors_event_only_recording_config
   //% block="Recording information for sensor logging |inequality $inequality |comparator $comparator"
   //% weight=99
   export function eventOnlyRecordingConfig(inequality: string, comparator: number): RecordingConfig {
@@ -127,7 +125,6 @@ namespace sensors {
    * @returns concrete sensor that the input name corresponds to, throws an error if not-defined.
    */
   //% group="Sensors"
-  //% blockId=sensors_get_microbit_sensor
   //% block="get a microbit sensor from |MicrobitSensors $sensor"
   //% weight=98
   export function getMicrobitSensor(sensor: MicrobitSensors): Sensor {

@@ -113,7 +113,6 @@ namespace sensors {
    * @returns A Sensor object that can be used like any other sensor in this library.
    */
   //% group="Sensors"
-  //% blockId=sensors_get_jacdac_sensor
   //% block="Get a jacdac sensor |service class $srv |role name $roleName"
   //% weight=97
   export function getJacdacSensor(srv: JacdacSensorSrvs, roleName: string): Sensor {
@@ -123,6 +122,7 @@ namespace sensors {
       throw "Error: Invalid serviceClass: that Jacdac Client is not supported. Please use a SimpleSensorClient."
 
     const jdClient = new jacdac.SimpleSensorClient(srv, roleName, s.stateFormat);
+
     return new Sensor({
       name: s.name,
       rName: s.rName,
@@ -146,7 +146,6 @@ namespace sensors {
    * @returns A Sensor object that can be used like any other sensor in this library.
    */
   //% group="Sensors"
-  //% blockId=sensors_wrap_jacdac_sensor
   //% block="Wrap a jacdac sensor |JDClient $jdClient"
   //% weight=96
   export function wrapJacdacSensor(jdClient: jacdac.SimpleSensorClient): Sensor {

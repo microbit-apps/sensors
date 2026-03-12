@@ -1,16 +1,6 @@
 {
     "name": "sensors",
     "version": "0.0.11",
-    "files": [
-        "main.ts",
-        "sensors.ts",
-        "sensorScheduler.ts",
-        "jacdacSensorMap.ts",
-        "pid.ts"
-    ],
-    "supportedTargets": [
-        "microbit"
-    ],
     "dependencies": {
         "core": "*",
         "radio": "*",
@@ -18,5 +8,15 @@
         "datalogger": "*",
         "jacdac": "github:jacdac/pxt-jacdac#v1.9.40"
     },
-    "testDependencies": {}
+    "files": [
+        "main.ts",
+        "sensors.ts",
+        "sensorScheduler.ts",
+        "jacdacSensorMap.ts",
+        "pid.ts"
+    ],
+    "testDependencies": {},
+    "supportedTargets": [
+        "microbit"
+    ]
 }
