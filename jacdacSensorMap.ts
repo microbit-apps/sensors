@@ -144,7 +144,7 @@ namespace sensors {
    * @param jdClient is a SimpleSensorClient, its .serviceClass is used to look up metadata about the sensor.
    * @returns A Sensor object that can be used like any other sensor in this library.
    */
-  //% block="Wrap a jacdac sensor |JDClient $jdClient"
+  //% block="Wrap a jacdac sensor"
   //% weight=97
   export function wrapJacdacSensor(jdClient: jacdac.SimpleSensorClient): Sensor {
     if (!jdClient) {
