@@ -54,13 +54,19 @@ namespace sensors {
   // recordingConfig(), getMicrobitSensor() and wrapJacdacSensor()
   //---------------------------------------------------------------
 
-  //% block="Recording information for sensor logging |measurements $measurements |period $period |inequality $inequality |comparator $comparator"
+  //% block="Recording information for sensor logging measurements $measurements period in ms $period inequality $inequality |comparator $comparator"
+  //% measurements.defl=10
+  //% period.defl=1000
+  //% inequality.defl=">"
+  //% inequality.defl=0
   //% weight=96
   export function recordingConfig(measurements: number, period: number, inequality?: string, comparator?: number): RecordingConfig {
     return { measurements, period, inequality, comparator }
   }
 
-  //% block="Recording information for sensor logging |inequality $inequality |comparator $comparator"
+  //% block="Recording information for sensor logging inequality $inequality comparator $comparator"
+  //% inequality.defl=">"
+  //% inequality.defl=0
   //% weight=95
   export function eventOnlyRecordingConfig(inequality: string, comparator: number): RecordingConfig {
     return { measurements: undefined, period: undefined, inequality, comparator }
