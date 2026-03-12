@@ -1,0 +1,5 @@
+.pxt/
+built/
+compile_commands.json
+node_modules/
+pxt_modules/
