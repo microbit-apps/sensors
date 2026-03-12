@@ -54,7 +54,6 @@ namespace sensors {
   // recordingConfig(), getMicrobitSensor() and wrapJacdacSensor()
   //---------------------------------------------------------------
 
-  //% group="Sensors"
   //% block="Recording information for sensor logging |measurements $measurements |period $period |inequality $inequality |comparator $comparator"
   //% weight=96
   export function recordingConfig(measurements: number, period: number, inequality?: string, comparator?: number): RecordingConfig {
