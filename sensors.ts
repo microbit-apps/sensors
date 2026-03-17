@@ -485,9 +485,9 @@ namespace sensors {
     //---------------------
 
     /** Latest value from the sensor. Does not change any buffered readings.*/
-    public reading(): number { return this.sensorFn() }
+    get reading(): number { return this.sensorFn() }
     /** Latest value from the sensor. Normalised by this sensors minimum and maximum. Does not change any buffered readings.*/
-    get normalisedReading(): number { return (this.reading() - this.minimum) / this.range }
+    get normalisedReading(): number { return (this.reading - this.minimum) / this.range }
     get period(): number { return this.config.period; }
     get measurements(): number { return this.config.measurements }
 
@@ -498,12 +498,12 @@ namespace sensors {
 
 
     public formatReading(reading?: number): string {
-      reading = (reading) ? reading : this.reading();
+      reading = (reading) ? reading : this.reading;
       return this.reading + " " + this.unitSymbol
     }
 
     public formatNormalisedReading(reading?: number): string {
-      reading = (reading) ? reading : this.reading();
+      reading = (reading) ? reading : this.reading;
       return this.normalisedReading + " " + this.unitSymbol
     }
 
@@ -579,7 +579,7 @@ namespace sensors {
      * @returns the new length of this.dataBuffer (same as this.normalisedDataBuffer)
      */
     public readIntoBufferOnce(): number {
-      const reading = this.reading()
+      const reading = this.reading
 
       if (this.dataBuffer.length >= this.maxBufferSize || reading === undefined) {
         this.dataBuffer.shift();
@@ -635,7 +635,7 @@ namespace sensors {
       if (!time)
         time = control.millis()
 
-      this.lastLoggedReading = this.reading()
+      this.lastLoggedReading = this.reading
 
       const reading = this.lastLoggedReading.toString().slice(0, READING_PRECISION)
 
@@ -681,7 +681,7 @@ namespace sensors {
       let reading: number;
       control.inBackground(() => {
         while (true) {
-          reading = this.reading();
+          reading = this.reading;
 
           if (this.eventShouldTrigger(reading))
             break;
