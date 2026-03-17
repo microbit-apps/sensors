@@ -49,49 +49,62 @@ namespace sensors {
   /** When checking if an even has triggered. How long should the sensor wait between measurements? */
   const EVENT_POLLING_RATE_MS: number = 5
 
-    /**
-     * These should be shadows in the future, that are taken in some function like startLogging or startEvent.
-     */
-    //% block="take $measurements measurements in total, one every $period ms"
-    //% measurements.defl=10
-    //% period.defl=1000
-    //% group="Recording config"
-    //% weight=96
-    export function recordingConfig(measurements: number, period: number): RecordingConfig {
-        return { measurements, period}
-    }
+  /**
+   * These should be shadows in the future, that are taken in some function like startLogging or startEvent.
+   */
+  //% block="take $measurements measurements in total, one every $period ms"
+  //% measurements.defl=10
+  //% period.defl=1000
+  //% group="Recording config"
+  //% weight=96
+  export function recordingConfig(measurements: number, period: number): RecordingConfig {
+    return { measurements, period }
+  }
 
-    /**
-     * These should be shadows in the future, that are taken in some function like startLogging or startEvent.
-     */
-    //% block="measure when $inequality $comparator"
-    //% inequality.defl=">"
-    //% comparator.defl=0
-    //% group="Recording config"
-    //% weight=95
-    export function eventOnlyRecordingConfig(inequality: string, comparator: number): RecordingConfig {
-        return { measurements: undefined, period: undefined, inequality, comparator }
-    }
+  /**
+   * These should be shadows in the future, that are taken in some function like startLogging or startEvent.
+   */
+  //% block="measure when $inequality $comparator"
+  //% inequality.defl=">"
+  //% comparator.defl=0
+  //% group="Recording config"
+  //% weight=95
+  export function eventOnlyRecordingConfig(inequality: string, comparator: number): RecordingConfig {
+    return { measurements: undefined, period: undefined, inequality, comparator }
+  }
 
 
   /**
   * List of all Microbit sensors.
   */
   export enum MicrobitSensors {
-    //% block
+    //% block="Accelerometer X axis"
     AccelerometerX,
+    //% block="Accelerometer Y axis"
     AccelerometerY,
+    //% block="Accelerometer Z axis"
     AccelerometerZ,
+    //% block="Pitch"
     Pitch,
+    //% block="Roll"
     Roll,
+    //% block="Analog on Ring 0"
     AnalogPin0,
+    //% block="Analog on Ring 1"
     AnalogPin1,
+    //% block="Analog on Ring 2"
     AnalogPin2,
+    //% block="Light"
     Light,
+    //% block="Temperature"
     Temperature,
+    //% block="Magnetometer"
     Magnetometer,
+    //% block="Logo"
     Logo,
+    //% block="Volume"
     Volume,
+    //% block="Compass"
     Compass
   }
 

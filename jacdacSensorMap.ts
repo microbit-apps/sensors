@@ -37,65 +37,94 @@ namespace sensors {
   */
   export enum JacdacSensorSrvs {
     /** 0x1e9778c5 */
-    //% block
+    //% block="Water Acidity"
     WaterAcidity = 0x1e9778c5,
     /** 0x1e117cea */
+    //% block="Air Pressure"
     AirPressure = 0x1e117cea,
     /** 0x1473a263 */
+    //% block="Button"
     Button = 0x1473a263,
     /** 0x15b7b9bf */
+    //% block="Compass"
     Compass = 0x15b7b9bf,
     /** 0x1912c8ae */
+    //% block="DC Current"
     DcCurrent = 0x1912c8ae,
     /** 0x1633ac19 */
+    //% block="DC Voltage"
     DcVoltage = 0x1633ac19,
     /** 0x141a6b8a */
+    //% block="Distance"
     Distance = 0x141a6b8a,
     /** 0x169c9dc6 */
+    //% block="EC02"
     ECO2 = 0x169c9dc6,
     /** 0x1f1f7277 */
+    //% block="Electrical Conductivity"
     ElectricalConductivity = 0x1f1f7277,
     /** 0x1f47c6c6 */
+    //% block="Flex"
     Flex = 0x1f47c6c6,
     /** 0x166c6dc4 */
+    //% block="Heart Rate"
     HeartRate = 0x166c6dc4,
     /** 0x16c810b8 */
+    //% block="Humidity"
     Humidity = 0x16c810b8,
     /** 0x1e6ecaf2 */
+    //% block="Illuminance"
     Illuminance = 0x1e6ecaf2,
     /** 0x17dc9a1c */
+    //% block="Light Level"
     LightLevel = 0x17dc9a1c,
     /** 0x12fe180f */
+    //% block="Magnetic Field"
     MagneticField = 0x12fe180f,
     /** 0x1f274746 */
+    //% block="Potentiometer"
     Potentiometer = 0x1f274746,
     /** 0x10bb4eb6 */
+    //% block="Pulse Oximeter"
     PulseOximeter = 0x10bb4eb6,
     /** 0x13734c95 */
+    //% block="Rain Gauge"
     RainGauge = 0x13734c95,
     /** 0x10fa29c9 */
+    //% block="Rotary Encoder"
     RotaryEncoder = 0x10fa29c9,
     /** 0x19f8e291 */
+    //% block="Rotations Per Minute (RPM)"
     RotationsPerMinute = 0x19f8e291,
     /** 0x12fc9103 */
+    //% block="Servo"
     Servo = 0x12fc9103,
     /** 0x1d4aa3b3 */
+    //% block="Soil Moisture"
     SoilMoisture = 0x1d4aa3b3,
     /** 0x14ad1a5d */
+    //% block="Sound level"
     SoundLevel = 0x14ad1a5d,
     /** 0x1421bac7 */
+    //% block="Temperature"
     Temperature = 0x1421bac7,
     /** 0x12a5b597 */
+    //% block="TVOC"
     TVOC = 0x12a5b597,
     /** 0x1f6e0d90 */
+    //% block="UV Index"
     UvIndex = 0x1f6e0d90,
     /** 0x147b62ed */
+    //% block="Water level"
     Waterlevel = 0x147b62ed,
     /** 0x1f4d5040 */
+    //% block="Weighing scale"
     WeightScale = 0x1f4d5040,
     /** 0x186be92b */
+    //% block="Wind direction"
     WindDirection = 0x186be92b,
     /** 0x1b591bbf */
+    //% block="Wind speed"
     WindSpeed = 0x1b591bbf
   }
 
