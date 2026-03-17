@@ -24,7 +24,7 @@ namespace sensors {
     let integrals: number[] = sensors.map(_ => 0);
 
     while (true) {
-      readings = sensors.map((sensor) => sensor.reading)
+      readings = sensors.map((sensor) => sensor.reading())
       errors = readings.map((reading, index) => targets[index] - reading)
 
       proportionals = errors
