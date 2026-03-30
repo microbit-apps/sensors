@@ -5,9 +5,7 @@ namespace sensors {
   * This is looked up by a SimpleSensorClient.serviceClass:
   *     The metadata therein can be used to make a Sensor(), see getJacdacSensor() and wrapJacdacSensor()
   */
-  type SimpleSensorsMap = {
-    /** This service class key is in decimal, since that's what jacdac.SimpleSensorClient.serviceClass returns */
-    [serviceClass: number]: {
+ type SimpleSensorMetaData = {
       /** A unique name starting with 'Jacdac', e.g: JacdacButton not the same as the client specific name 'button1'. */
       name: string,
       /** A unique shortened name starting with 'JD', e.g: JDB. This is useful is you want to transmit over radio. */
@@ -28,9 +26,12 @@ namespace sensors {
       */
       stateFormat: string
     }
+
+  type SimpleSensorsMap = {
+    /** This service class key is in decimal, since that's what jacdac.SimpleSensorClient.serviceClass returns */
+    [serviceClass: number]: SimpleSensorMetaData
   }
-
-
+  
   /**
   * Supported Jacdac Simple Sensors.
   * Maps a Jacdac sensor name to its service class in decimal.
@@ -515,6 +516,15 @@ namespace sensors {
 
   export function listAllJacdacSensors(): JacdacSensorSrvs[] {
     return Object.keys(__jacdacSensorMap).map(k => parseInt(k)) as JacdacSensorSrvs[];
+  }
+
+  export function getSimpleSensorMetaData(srv: JacdacSensorSrvs): SimpleSensorMetaData {
+    const s = __jacdacSensorMap[srv];
+
+    if (!s)
+      throw "Error: Invalid serviceClass: that Jacdac Client is not supported. Please use a SimpleSensorClient."
+
+    return s;
   }
 
   export const numberOfSupportedJacdacSensors: number = Object.keys(__jacdacSensorMap).length;
