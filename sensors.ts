@@ -3,20 +3,8 @@
 * Provides high level functionality for logging, buffering, normalising and scheduling sensors.
 */
 //% weight=1 color="#063970" icon="\uf233"
+//% groups=["Get a sensor", "Get data from sensors", "Get data from the sensor's buffer", "Logging and events", "Recording config"]
 namespace sensors {
-  /**
-   * Generated at recordingConfigSelection 
-   * Passed to and owned by a sensor
-   * The sensor uses this information to control how it logs readings
-   */
-  export type RecordingConfig = {
-    measurements: number,
-    period: number
-    inequality?: string,
-    comparator?: number
-  };
-
-
   /**
    * Used to lookup the implemented events via sensorEventFunctionLookup[]
    * 
@@ -48,30 +36,6 @@ namespace sensors {
   const READING_PRECISION: number = 8
   /** When checking if an even has triggered. How long should the sensor wait between measurements? */
   const EVENT_POLLING_RATE_MS: number = 5
-
-  /**
-   * These should be shadows in the future, that are taken in some function like startLogging or startEvent.
-   */
-  //% block="take $measurements measurements in total, one every $period ms"
-  //% measurements.defl=10
-  //% period.defl=1000
-  //% group="Recording config"
-  //% weight=96
-  export function recordingConfig(measurements: number, period: number): RecordingConfig {
-    return { measurements, period }
-  }
-
-  /**
-   * These should be shadows in the future, that are taken in some function like startLogging or startEvent.
-   */
-  //% block="measure when $inequality $comparator"
-  //% inequality.defl=">"
-  //% comparator.defl=0
-  //% group="Recording config"
-  //% weight=95
-  export function eventOnlyRecordingConfig(inequality: string, comparator: number): RecordingConfig {
-    return { measurements: undefined, period: undefined, inequality, comparator }
-  }
 
 
   /**
@@ -323,6 +287,7 @@ namespace sensors {
    * Abstraction for all available sensors.
    * This class is extended by each of the concrete sensors which add on static methods for their name, getting their readings & optionally min/max readings
    */
+  //%
   export class Sensor {
     /** Immutable: Forward facing name that is presented to the user in LiveDataViewer, Sensor Selection & TabularDataViewer */
     public readonly name: string;
@@ -339,9 +304,9 @@ namespace sensors {
     /** Immutable: Need to know whether or not this sensor is on the microbit or is an external Jacdac one; see sensorSelection.ts */
     public readonly isJacdacSensor: boolean;
     /** Immutable: "percent", "pH", "hectopascals". Is "" where not applicable. */
-    public readonly unitName: string;
+    private readonly _unitName: string;
     /** Immutable: Examples: "%", "pH", "hPa". Is "" where not applicable.  */
-    public readonly unitSymbol: string;
+    private readonly _unitSymbol: string;
     /** Immutable: The + or - error for the sensor. This is 0 where it is not-stated or known. */
     public readonly readingError: number;
 
@@ -415,8 +380,8 @@ namespace sensors {
       this.minimum = opts.min
       this.maximum = opts.max
       this.range = this.maximum - this.minimum
-      this.unitName = (opts.units && opts.units[0]) ? opts.units[0] : ""
-      this.unitSymbol = (opts.units && opts.units[1]) ? opts.units[1] : ""
+      this._unitName = (opts.units && opts.units[0]) ? opts.units[0] : ""
+      this._unitSymbol = (opts.units && opts.units[1]) ? opts.units[1] : ""
       this.readingError = (opts.error) ? opts.error : 0
       this.sensorFn = opts.sensorFn
       this.isJacdacSensor = (opts.isJacdacSensor) ? opts.isJacdacSensor : false
@@ -485,90 +450,46 @@ namespace sensors {
     //---------------------
 
     /** Latest value from the sensor. Does not change any buffered readings.*/
+    //% blockId="sensor_reading" block="get reading from %sensor(mySensor)"
+    //% group="Get data from sensors"
+    //% weight=100
     get reading(): number { return this.sensorFn() }
+
     /** Latest value from the sensor. Normalised by this sensors minimum and maximum. Does not change any buffered readings.*/
+    //% blockId="sensor_normalised_reading" block="get normalised reading from %sensor(mySensor)"
+    //% group="Get data from sensors"
+    //% weight=99
     get normalisedReading(): number { return (this.reading - this.minimum) / this.range }
-    get period(): number { return this.config.period; }
-    get measurements(): number { return this.config.measurements }
+  
+    //% blockId="sensor_min" block="get the minimum possible value of %sensor(mySensor)"
+    //% group="Get data from sensors"
+    //% weight=98
+    get min(): number { return this.minimum }
 
-    /** Should be the same as .normalisedBufferLength() */
-    get bufferLength(): number { return this.dataBuffer.length }
-    /** Should be the same as .bufferLength() */
-    get normalisedBufferLength(): number { return this.normalisedDataBuffer.length }
+    //% blockId="sensor_max" block="get the maximum possible value of %sensor(mySensor)"
+    //% group="Get data from sensors"
+    //% weight=97
+    get max(): number { return this.maximum }
 
+    //% blockId="sensor_unit_symbol" block="get the symbol for the units of %sensor(mySensor) "
+    //% group="Get data from sensors"
+    //% weight=96
+    get unitSymbol(): string { return this._unitSymbol }
 
-    public formatReading(reading?: number): string {
-      reading = (reading) ? reading : this.reading;
-      return this.reading + " " + this.unitSymbol
-    }
+    //% blockId="sensor_unit_name" block="get the name for the units of %sensor(mySensor)"
+    //% group="Get data from sensors"
+    //% weight=95
+    get unitName(): string { return this._unitName }
 
-    public formatNormalisedReading(reading?: number): string {
-      reading = (reading) ? reading : this.reading;
-      return this.normalisedReading + " " + this.unitSymbol
-    }
-
-    public getMaxBufferSize(): number { return this.maxBufferSize }
-    public getNthReading(n: number): number { return this.dataBuffer[n] }
-    public getNthNormalisedReading(n: number): number { return this.normalisedDataBuffer[n] }
-    public getNormalisedBufferLength(): number { return this.normalisedDataBuffer.length }
-    public hasMeasurements(): boolean { return this.config.measurements > 0; }
-
+    //% blockId="sensor_show_reading" block="show a reading from %sensor(mySensor) truncated to be $truncatedTo length"
+    //% group="Get data from sensors"
+    //% weight=94
     public showReading(truncatedTo: number = READING_PRECISION): void { basic.showString(this.formatReading().slice(0, truncatedTo)) }
 
+    //---------------
+    // Sensor buffer:
+    //---------------
 
-    /**
-     * Used by the DataRecorder to display information about the sensor as it is logging.
-     * @returns linles of information that can be printed out into a box for display.
-     */
-    public getRecordingInformation(): string[] {
-      if (this.hasMeasurements())
-        return [
-          this.period / 1000 + " second period",
-          this.config.measurements.toString() + " measurements left",
-          ((this.config.measurements * this.period) / 1000).toString() + " seconds left",
-          "Last log was " + this.lastLoggedReading.toString().slice(0, 5),
-        ]
-      else
-        return [
-          "Logging complete.",
-          "Last log was " + this.lastLoggedReading.toString().slice(0, 5),
-        ]
-    }
-
-    /**
-     * Used by the DataRecorder to display information about the sensor as it is logging.
-     * @returns lines of information that can be printed out into a box for display.
-     */
-    public getEventInformation(): string[] {
-      if (this.hasMeasurements())
-        return [
-          this.config.measurements.toString() + " events left",
-          "Logging " + this.config.inequality + " " + this.config.comparator + " events",
-          "Last log was " + this.lastLoggedReading.toString().slice(0, 5),
-          this.lastLoggedEventDescription
-        ]
-
-      else
-        return [
-          "Logging complete.",
-          "Last log was " + this.lastLoggedReading.toString().slice(0, 5)
-        ]
-    }
-
-    /**
-     * Change the size of the buffer used for this.dataBuffer & this.normalisedBuffer
-     * Will shift out old this.dataBuffer & this.normalisedBuffer values from the front.
-     * @param newBufferSize absolute new value for both this.dataBuffer & this.normalisedBuffer
-     */
-    public setBufferSize(newBufferSize: number): void {
-      // Remove additional values if neccessary:
-      if (this.dataBuffer.length > newBufferSize) {
-        const difference = this.dataBuffer.length - newBufferSize
-        this.dataBuffer.splice(0, difference)
-        this.normalisedDataBuffer.splice(0, difference)
-      }
-      this.maxBufferSize = newBufferSize
-    }
 
     /**
      * Add one value to this.dataBuffer, add that value normalised into this.normalisedBuffer too.
@@ -578,6 +499,9 @@ namespace sensors {
      * @param fromY the offset by which the reading should be raised before adding to this.normalisedBuffer
      * @returns the new length of this.dataBuffer (same as this.normalisedDataBuffer)
      */
+    //% blockId="sensor_read_into_buffer_once" block="read into %sensor(mySensor) buffer & normalised buffer, then get its new length"
+    //% group="Get data from the sensor's buffer"
+    //% weight=100
     public readIntoBufferOnce(): number {
       const reading = this.reading
 
@@ -595,32 +519,55 @@ namespace sensors {
       return this.dataBuffer.length
     }
 
-    /**
-     * Populates this.normalisedBuffer with the Y position for each element in this.dataBuffer.
-     * Uses BUFFERED_SCREEN_HEIGHT.
-     * Invoked upon scrolling in the live-data-viewer.
-     * @param fromY The y value that each element should be offset by.
-     */
-    public normaliseDataBuffer(): void {
-      const min = this.minimum
-      const range: number = Math.abs(min) + this.maximum;
+    //% blockId="sensor_get_nth_reading" block="get the reading from %sensor(mySensor) buffer at index $n"
+    //% group="Get data from the sensor's buffer"
+    //% weight=99
+    public getNthReading(n: number): number { return this.dataBuffer[n] }
+    
+    //% blockId="sensor_get_nth_normalised_reading" block="get the normalised reading from %sensor(mySensor) buffer at index $n"
+    //% group="Get data from the sensor's buffer"
+    //% weight=98
+    public getNthNormalisedReading(n: number): number { return this.normalisedDataBuffer[n] }
 
-      this.normalisedDataBuffer = []
-      for (let i = 0; i < this.dataBuffer.length; i++) {
-        this.normalisedDataBuffer.push((this.dataBuffer[i] - min) / range);
+    /** Should be the same as .normalisedBufferLength() */
+    //% blockId="sensor_buffer_length" block="get %sensor(mySensor) buffer length"
+    //% group="Get data from the sensor's buffer"
+    //% weight=97
+    get bufferLength(): number { return this.dataBuffer.length }
+    
+    /** Should be the same as .bufferLength() */
+    //% blockId="sensor_normalised_buffer_length" block="get %sensor(mySensor) normalised buffer length"
+    //% group="Get data from the sensor's buffer"
+    //% weight=96
+    get normalisedBufferLength(): number { return this.normalisedDataBuffer.length }
+
+    //% blockId="sensor_get_max_buffer_size" block="get %sensor(mySensor) buffer's current maximum length"
+    //% group="Get data from the sensor's buffer"
+    //% weight=95
+    public getMaxBufferSize(): number { return this.maxBufferSize }
+
+    /**
+     * Change the size of the buffer used for this.dataBuffer & this.normalisedBuffer
+     * Will shift out old this.dataBuffer & this.normalisedBuffer values from the front.
+     * @param newBufferSize absolute new value for both this.dataBuffer & this.normalisedBuffer
+     */
+    //% blockId="sensor_set_buffer_size" block="set the size of %sensor(mySensor) data buffer and normalised data buffer to $newBufferSize"
+    //% group="Get data from the sensor's buffer"
+    //% weight=95
+    public setBufferSize(newBufferSize: number): void {
+      // Remove additional values if neccessary:
+      if (this.dataBuffer.length > newBufferSize) {
+        const difference = this.dataBuffer.length - newBufferSize
+        this.dataBuffer.splice(0, difference)
+        this.normalisedDataBuffer.splice(0, difference)
       }
+      this.maxBufferSize = newBufferSize
     }
 
-    /**
-     * Set inside of recordingConfigSelection.
-     * @param config see recordingConfigSelection.
-     */
-    public setConfig(config: RecordingConfig): void {
-      const isInEventMode = config.comparator != null && config.inequality != null
-      this.config = config
-      this.totalMeasurements = this.config.measurements
-      this.isInEventMode = isInEventMode
-    }
+    //-------------------------
+    // Sensor logging & events:
+    //-------------------------
+
 
     /**
      * Records a sensor's reading to the datalogger.
@@ -631,6 +578,11 @@ namespace sensors {
      * You can pass in control.millis() if you want the exact time though.
      * @returns A CSV string of the log that was made, the sensors name will be cut-short to its .radioName. "" is returned if no log is made.
      */
+    //% block="log a reading from %sensor(mySensor) and optionally override timestapm with $time. Get log back as a string."
+    //% measurements.defl=10
+    //% period.defl=99
+    //% group="Logging and events"
+    //% weight=100
     public log(time?: number): string {
       if (!time)
         time = control.millis()
@@ -665,30 +617,126 @@ namespace sensors {
       return ""
     }
 
+    //% blockId="sensor_period" block="get the period set in %sensor(mySensor) config"
+    //% group="Logging and events"
+    //% weight=99
+    get period(): number { return this.config.period; }
+    
+    //% blockId="sensor_measurements" block="get the number of measurements set in %sensor(mySensor) config"
+    //% group="Logging and events"
+    //% weight=98
+    get measurements(): number { return this.config.measurements }
+
+    //% blockId="sensor_show_reading" block="Does %sensor(mySensor) have readings? see setConfig"
+    //% group="Logging and events"
+    //% weight=97
+    public hasMeasurements(): boolean { return this.config.measurements > 0; }
+
+    /** Helper function, used by showReading, log. Doesn't need to be a block */
+    public formatReading(reading?: number): string {
+      reading = (reading) ? reading : this.reading;
+      return this.reading + " " + this._unitSymbol
+    }
+
+    /** Helper function, used by showReading, log. Doesn't need to be a block */
+    public formatNormalisedReading(reading?: number): string {
+      reading = (reading) ? reading : this.reading;
+      return this.normalisedReading + " " + this._unitSymbol
+    }
 
     /**
-    * asynchronously wait for the event, as detailed in config, to occur.
-    * runs control.inBackground()
-    * The cb is also invoked inBackground.
-    */
-    public onEvent(eventCb: (fmtReading: string) => void, config?: RecordingConfig) {
-      if (config)
-        this.setConfig(config)
-
-      if (!this.config)
-        throw "raiseEventWhen: no config: use .setConfig before calling this fn"
-
-      let reading: number;
-      control.inBackground(() => {
-        while (true) {
-          reading = this.reading;
-
-          if (this.eventShouldTrigger(reading))
-            break;
-          basic.pause(EVENT_POLLING_RATE_MS);
-        }
-        eventCb(this.formatReading(reading))
-      })
+     * Used by the DataRecorder to display information about the sensor as it is logging.
+     * @returns lines of information that can be printed out into a box for display.
+     */
+    //% blockId="sensor_get_recording_information" block="get info about about the logged readings from %sensor(mySensor)"
+    //% group="Logging and events"
+    //% weight=96
+    public getRecordingInformation(): string[] {
+      if (this.hasMeasurements())
+        return [
+          this.period / 1000 + " second period",
+          this.config.measurements.toString() + " measurements left",
+          ((this.config.measurements * this.period) / 1000).toString() + " seconds left",
+          "Last log was " + this.lastLoggedReading.toString().slice(0, 5),
+        ]
+      else
+        return [
+          "Logging complete.",
+          "Last log was " + this.lastLoggedReading.toString().slice(0, 5),
+        ]
     }
+
+    /**
+     * Used by the DataRecorder to display information about the sensor as it is logging.
+     * @returns lines of information that can be printed out into a box for display.
+     */
+    //% blockId="sensor_get_event_information" block="get info about the logged events from %sensor(mySensor)"
+    //% group="Logging and events"
+    //% weight=95
+    public getEventInformation(): string[] {
+      if (this.hasMeasurements())
+        return [
+          this.config.measurements.toString() + " events left",
+          "Logging " + this.config.inequality + " " + this.config.comparator + " events",
+          "Last log was " + this.lastLoggedReading.toString().slice(0, 5),
+          this.lastLoggedEventDescription
+        ]
+
+      else
+        return [
+          "Logging complete.",
+          "Last log was " + this.lastLoggedReading.toString().slice(0, 5)
+        ]
+    }
+
+    /**
+     * Set inside of recordingConfigSelection.
+     * @param config see recordingConfigSelection.
+     */
+    //% block="setup %sensor(mySensor) ready for logging with $config config"
+    //% group="Recording config"
+    //% weight=100
+    public setConfig(config: RecordingConfig): void {
+      const isInEventMode = config.comparator != null && config.inequality != null
+      this.config = config
+      this.totalMeasurements = this.config.measurements
+      this.isInEventMode = isInEventMode
+    }
+  }
+
+  /**
+   * Generated at recordingConfigSelection 
+   * Passed to and owned by a sensor
+   * The sensor uses this information to control how it logs readings
+   */
+  export type RecordingConfig = {
+    measurements: number,
+    period: number
+    inequality?: string,
+    comparator?: number
+  };
+
+  /**
+   * These should be shadows in the future, that are taken in some function like startLogging or startEvent.
+   */
+  //% block="config that takes $measurements measurements in total, one every $period ms"
+  //% measurements.defl=10
+  //% period.defl=99
+  //% group="Recording config"
+  //% weight=99
+  export function recordingConfig(measurements: number, period: number): RecordingConfig {
+    return { measurements, period }
+  }
+
+  /**
+   * These should be shadows in the future, that are taken in some function like startLogging or startEvent.
+   */
+  //% block="config to measure when $inequality $comparator"
+  //% inequality.defl=">"
+  //% comparator.defl=0
+  //% group="Recording config"
+  //% weight=98
+  export function eventOnlyRecordingConfig(inequality: string, comparator: number): RecordingConfig {
+    return { measurements: undefined, period: undefined, inequality, comparator }
   }
 }

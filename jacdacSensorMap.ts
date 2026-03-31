@@ -145,6 +145,7 @@ namespace sensors {
   //% block="Get a jacdac sensor $srv and name it $roleName"
   //% srv.defl=JacdacSensorSrvs.WaterAcidity
   //% roleName.defl="jacdacSensor1"
+  //% group="Get a sensor"
   //% blockSetVariable=mySensor
   //% weight=98
   export function getJacdacSensor(srv: JacdacSensorSrvs, roleName: string): Sensor {
