@@ -4,7 +4,6 @@ jacdac.start()
 // 1. make generic so that any sensor can be used, not just light level
 // 2. make it so that the widget updates on sensor change, not just on a loop
 // 3. make it so that the widget only updates the text, not the whole thing
-// 4. handle multiple sensors being added at same time
 // 5. need a way for user to dismiss the widget, maybe a button on the widget itself?
 // 6. need to handle user inputs (buttons, etc), user outputs, and actuators (motors, etc) in general, not just sensors
 
@@ -24,6 +23,7 @@ input.onButtonPressed(Button.A, () => {
 
 
 namespace microgui {
+import Button = user_interface_base.Button
 
 control.singleSimulator();
 const app = new App();
@@ -69,6 +69,17 @@ jacdac.bus.on(jacdac.DEVICE_ANNOUNCE, (dev: jacdac.Device) => {
 let currentSensor: sensors.Sensor = undefined
 let gcs : GUIComponentScene = undefined
 
+context.onEvent(ControllerButtonEvent.Pressed, controller.B.id,
+    () => { 
+        if (gcs) {
+            app.popScene()
+            gcs = undefined
+            currentSensor = undefined
+        }
+    }
+)
+
+
 basic.forever(() => {
     if (sensorsToProcess.length > 0 && !gcs) {
         console.log(`processing sensor ${sensorsToProcess[0].name}...`)
@@ -77,7 +88,9 @@ basic.forever(() => {
     if (currentSensor) {
         const textComponent = getTextComponent(currentSensor)
         app.popScene()
-        gcs = new GUIComponentScene({ app, components: [textComponent] })
+        gcs = new GUIComponentScene({ app, 
+            components: [textComponent] })
+        gcs.showAllComponents()
         app.pushScene(gcs)
     }
 })
