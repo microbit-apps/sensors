@@ -1,0 +1,19 @@
+{
+    "name": "my-project",
+    "version": "0.0.22",
+    "files": [
+        "main.ts"
+    ],
+    "supportedTargets": [
+        "microbit"
+    ],
+    "dependencies": {
+        "core": "*",
+        "radio": "*",
+        "microphone": "*",
+        "microgui": "github:microbit-apps/microgui#v0.0.41",
+        "sensors": "github:microbit-apps/sensors#198ddbe594c953d81499e164dce58d457dfda325",
+        "jacdac-microbit": "github:jacdac/pxt-jacdac/devices/microbit"
+    },
+    "testDependencies": {}
+}
