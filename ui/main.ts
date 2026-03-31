@@ -47,18 +47,14 @@ let devicesServiceFound: string[] = []
 
 jacdac.bus.on(jacdac.DEVICE_ANNOUNCE, (dev: jacdac.Device) => {
     console.log(`device connected: ${dev.deviceId} with ${dev.serviceClassLength} services  `)
-
     for (let i = 1; i < dev.serviceClassLength; i++) {
         const serviceClass = dev.serviceClassAt(i) // skip service class 0 which is usually the control service
         // print it as hex to make it easier to read
         const devService = `${dev.deviceId}:${serviceClass}`
         if (devicesServiceFound.find(d => d === devService)) {
-            console.log(`already found ${devService}, skipping...`)
-            return
+            continue
         }
         devicesServiceFound.push(devService)
-        
-        console.log(`checking service class ${serviceClass} for device ${dev.deviceId}`)
         try {
             const sensor = sensors.getJacdacSensor(serviceClass, `sensor${sensorRoleCount}`)
             sensorsToProcess.push(sensor)
