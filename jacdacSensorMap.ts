@@ -165,7 +165,8 @@ namespace sensors {
       units: s.units,
       error: s.error,
       isJacdacSensor: true,
-      setupFn: () => { jdClient.start() }
+      setupFn: () => { jdClient.start() },
+      jdClient
     });
   }
 
@@ -199,7 +200,8 @@ namespace sensors {
       setupFn: () => {
         jdClient.start();
         jdClient.reading(); // Taking a reading to prevent the first reading being 'undefined' error.
-      }
+      },
+      jdClient
     });
   }
 

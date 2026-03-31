@@ -310,6 +310,9 @@ namespace sensors {
     /** Immutable: The + or - error for the sensor. This is 0 where it is not-stated or known. */
     public readonly readingError: number;
 
+    /** Access to the underlying client object, not used for micro:bit sensors - where this is null, and isJacdacSensor is false. Used by isConnected */
+    private _jdClient: jacdac.SimpleSensorClient;
+
     /** Set by .setConfig() */
     public totalMeasurements: number
 
@@ -362,7 +365,8 @@ namespace sensors {
       units?: string[],
       error?: number,
       isJacdacSensor?: boolean,
-      setupFn?: () => void
+      setupFn?: () => void,
+      jdClient?: jacdac.SimpleSensorClient
     }) {
       this.maxBufferSize = 80
       this.totalMeasurements = 0
@@ -385,6 +389,7 @@ namespace sensors {
       this.readingError = (opts.error) ? opts.error : 0
       this.sensorFn = opts.sensorFn
       this.isJacdacSensor = (opts.isJacdacSensor) ? opts.isJacdacSensor : false
+      this._jdClient = (opts.jdClient) ? opts.jdClient : null
 
       // There could be additional functions required to set up the sensor (see Jacdac modules or Accelerometers):
       if (opts.setupFn)
@@ -480,6 +485,12 @@ namespace sensors {
     //% group="Get data from sensors"
     //% weight=95
     get unitName(): string { return this._unitName }
+
+
+    //% blockId="sensor_unit_name" block="is %sensor(mySensor) connected?"
+    //% group="Get data from sensors"
+    //% weight=94
+    get isConnected(): boolean { return (this.isJacdacSensor) ? this._jdClient.isConnected() : true }
 
     //% blockId="sensor_show_reading" block="show a reading from %sensor(mySensor) truncated to be $truncatedTo length"
     //% group="Get data from sensors"
