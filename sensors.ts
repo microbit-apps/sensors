@@ -487,14 +487,14 @@ namespace sensors {
     get unitName(): string { return this._unitName }
 
 
-    //% blockId="sensor_unit_name" block="is %sensor(mySensor) connected?"
+    //% blockId="sensor_is_connected" block="is %sensor(mySensor) connected?"
     //% group="Get data from sensors"
     //% weight=94
     get isConnected(): boolean { return (this.isJacdacSensor) ? this._jdClient.isConnected() : true }
 
     //% blockId="sensor_show_reading" block="show a reading from %sensor(mySensor) truncated to be $truncatedTo length"
     //% group="Get data from sensors"
-    //% weight=94
+    //% weight=93
     public showReading(truncatedTo: number = READING_PRECISION): void { basic.showString(this.formatReading().slice(0, truncatedTo)) }
 
     //---------------
