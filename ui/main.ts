@@ -9,6 +9,7 @@ jacdac.start()
 // 6. need to handle user inputs (buttons, etc), user outputs, and actuators (motors, etc) in general, not just sensors
 
 input.lightLevel()
+input.temperature()
 
 // wait until the client is bound then create the widget
 input.onButtonPressed(Button.A, () => {
@@ -16,7 +17,7 @@ input.onButtonPressed(Button.A, () => {
     servers.start({
         // accelerometer: true,
         lightLevel: true,
-        // temperature: true,
+        temperature: true,
         forceSimulators: true
     })
 })
@@ -34,7 +35,8 @@ function getTextComponent(sensor: sensors.Sensor) {
         title: sensor.name,
         text: [`min: ${sensor.minimum.toString()}`, 
                 `max: ${sensor.maximum.toString()}`,
-                `val: ${Math.roundWithPrecision(sensor.reading,3).toString()} ${sensor.unitName}`], // optional arg
+                `val: ${Math.roundWithPrecision(sensor.reading,3)}`,
+                `units: ${sensor.unitName}` ], // optional arg
         colour: 6, // optional arg
         xScaling: 1.7, // optional arg
     })
@@ -48,8 +50,7 @@ let devicesServiceFound: string[] = []
 jacdac.bus.on(jacdac.DEVICE_ANNOUNCE, (dev: jacdac.Device) => {
     console.log(`device connected: ${dev.deviceId} with ${dev.serviceClassLength} services  `)
     for (let i = 1; i < dev.serviceClassLength; i++) {
-        const serviceClass = dev.serviceClassAt(i) // skip service class 0 which is usually the control service
-        // print it as hex to make it easier to read
+        const serviceClass = dev.serviceClassAt(i)
         const devService = `${dev.deviceId}:${serviceClass}`
         if (devicesServiceFound.find(d => d === devService)) {
             continue
