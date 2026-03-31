@@ -51,7 +51,9 @@ jdLightLevelClient.onStateChanged(() => {
 
 basic.forever(() => {
     if (gcs) {
-        gcs.deactivate()
+        gcs = new GUIComponentScene({ app, components: [getTextComponent()] })
+        app.popScene()
+        app.pushScene(gcs)
     }
 })
 
