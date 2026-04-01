@@ -1,7 +1,7 @@
 jacdac.start()
 
 // TODO:
-// 1. make generic so that any sensor can be used, not just light level
+// 1. handle role management, per service class, and map to device id, service index
 // 2. make it so that the widget updates on sensor change, not just on a loop
 // 3. make it so that the widget only updates the text, not the whole thing
 // 5. need a way for user to dismiss the widget, maybe a button on the widget itself?
@@ -47,6 +47,47 @@ let sensorRoleCount = 0
 let sensorsToProcess: sensors.Sensor[] = []
 let devicesServiceFound: string[] = []
 
+type RoleInfo = {
+    rName: string,
+    count: number,
+    deviceId: string,
+    serviceIndex: number
+}
+
+type ServiceToRoleInfo = {
+    [serviceClass: number]: RoleInfo[]
+}
+
+type ServiceToCount = {
+    [serviceClass: number]: number
+}
+
+const serviceToRoleInfo: ServiceToRoleInfo = {}
+const serviceToCount: ServiceToCount = {}
+
+function getRoleInfoForService(serviceClass: number, deviceId: string, serviceIndex: number): RoleInfo {
+    try {
+        const sensorData = sensors.getSimpleSensorMetaData(serviceClass)
+        if (!serviceToRoleInfo[serviceClass]) {
+            serviceToRoleInfo[serviceClass] = []
+            serviceToCount[serviceClass] = 0
+        }
+        const rName = sensorData.rName
+        const roleInfo = {
+            rName,
+            count: serviceToCount[serviceClass],
+            deviceId,
+            serviceIndex
+        }
+        serviceToRoleInfo[serviceClass].push(roleInfo)
+        serviceToCount[serviceClass]++
+        return roleInfo
+    } catch (e) {
+        return undefined
+    }
+
+}
+
 jacdac.bus.on(jacdac.DEVICE_ANNOUNCE, (dev: jacdac.Device) => {
     console.log(`device connected: ${dev.deviceId} with ${dev.serviceClassLength} services  `)
     for (let i = 1; i < dev.serviceClassLength; i++) {
@@ -56,13 +97,14 @@ jacdac.bus.on(jacdac.DEVICE_ANNOUNCE, (dev: jacdac.Device) => {
             continue
         }
         devicesServiceFound.push(devService)
-        try {
-            const sensor = sensors.getJacdacSensor(serviceClass, `sensor${sensorRoleCount}`)
-            sensorsToProcess.push(sensor)
-            sensorRoleCount++
-        } catch (e) {
-            console.log(`error creating widget for device ${dev.deviceId}: ${e}`)
+        const roleInfo = getRoleInfoForService(serviceClass, dev.deviceId, i)
+        if (!roleInfo) {
+            console.log(`service class ${serviceClass} not recognized as a sensor, skipping`)
+            continue
         }
+        const sensor = sensors.getJacdacSensor(serviceClass, roleInfo.rName)
+        sensorsToProcess.push(sensor)
+        sensorRoleCount++
     }
 })
 
