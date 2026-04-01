@@ -1,11 +1,12 @@
 jacdac.start()
 
 // TODO:
-// 1. handle role management, per service class, and map to device id, service index
-// 2. make it so that the widget updates on sensor change, not just on a loop
-// 3. make it so that the widget only updates the text, not the whole thing
-// 5. need a way for user to dismiss the widget, maybe a button on the widget itself?
-// 6. need to handle user inputs (buttons, etc), user outputs, and actuators (motors, etc) in general, not just sensors
+// - make it so that the widget updates on sensor change, not just on a loop
+// - make it so that the widget only updates the text, not the whole thing
+// - need a way for user to dismiss the widget, maybe a button on the widget itself?
+// - need to handle user inputs (buttons, etc), user outputs, and actuators (motors, etc) in general, not just sensors
+// - what happens when devices disconnect? optional dialog for this? 
+// - storing the RoleInfo in settings
 
 input.lightLevel()
 input.temperature()
