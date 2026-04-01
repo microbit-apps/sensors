@@ -14,7 +14,10 @@ input.temperature()
 input.onButtonPressed(Button.A, () => {
     console.log(`starting servers...`)
     servers.start({
-        // accelerometer: true,
+        touchP0: true,
+        touchP1: true,
+        touchP2: true,
+        soundLevel: true,
         lightLevel: true,
         temperature: true,
         forceSimulators: true
@@ -93,7 +96,7 @@ jacdac.bus.on(jacdac.DEVICE_ANNOUNCE, (dev: jacdac.Device) => {
     console.log(`device connected: ${dev.deviceId} with ${dev.serviceClassLength} services  `)
     for (let i = 1; i < dev.serviceClassLength; i++) {
         const serviceClass = dev.serviceClassAt(i)
-        const devService = `${dev.deviceId}:${serviceClass}`
+        const devService = `${dev.deviceId}:${serviceClass}:${i}`
         if (devicesServiceFound.find(d => d === devService)) {
             continue
         }
