@@ -28,15 +28,17 @@ import Button = user_interface_base.Button
 control.singleSimulator();
 const app = new App();
 
-function getTextComponent(sensor: sensors.Sensor) {
+function getTextComponent(role: string, sensor: sensors.Sensor) {
     const simpleTextComponent = new TextBox({
         alignment: GUIComponentAlignment.CENTRE,
         isActive: false,
         title: sensor.name,
-        text: [`min: ${sensor.minimum.toString()}`, 
+        text: [
+                `${Math.roundWithPrecision(sensor.reading,3)} ${sensor.unitName}`,
+                `min: ${sensor.minimum.toString()}`, 
                 `max: ${sensor.maximum.toString()}`,
-                `val: ${Math.roundWithPrecision(sensor.reading,3)}`,
-                `units: ${sensor.unitName}` ], // optional arg
+                `role: ${role}`
+            ], // optional arg
         colour: 6, // optional arg
         xScaling: 1.7, // optional arg
     })
@@ -44,12 +46,11 @@ function getTextComponent(sensor: sensors.Sensor) {
 }
 
 let sensorRoleCount = 0
-let sensorsToProcess: sensors.Sensor[] = []
+let sensorsToProcess: string[] = []
 let devicesServiceFound: string[] = []
 
 type RoleInfo = {
     rName: string,
-    count: number,
     deviceId: string,
     serviceIndex: number
 }
@@ -64,6 +65,7 @@ type ServiceToCount = {
 
 const serviceToRoleInfo: ServiceToRoleInfo = {}
 const serviceToCount: ServiceToCount = {}
+const roleToSensor: { [rName: string]: sensors.Sensor } = {}
 
 function getRoleInfoForService(serviceClass: number, deviceId: string, serviceIndex: number): RoleInfo {
     try {
@@ -72,10 +74,9 @@ function getRoleInfoForService(serviceClass: number, deviceId: string, serviceIn
             serviceToRoleInfo[serviceClass] = []
             serviceToCount[serviceClass] = 0
         }
-        const rName = sensorData.rName
+        const rName = `${sensorData.rName}${serviceToCount[serviceClass]}`
         const roleInfo = {
             rName,
-            count: serviceToCount[serviceClass],
             deviceId,
             serviceIndex
         }
@@ -103,12 +104,13 @@ jacdac.bus.on(jacdac.DEVICE_ANNOUNCE, (dev: jacdac.Device) => {
             continue
         }
         const sensor = sensors.getJacdacSensor(serviceClass, roleInfo.rName)
-        sensorsToProcess.push(sensor)
+        roleToSensor[roleInfo.rName] = sensor
+        sensorsToProcess.push(roleInfo.rName)
         sensorRoleCount++
     }
 })
 
-let currentSensor: sensors.Sensor = undefined
+let currentRole: string = undefined
 let gcs : GUIComponentScene = undefined
 
 context.onEvent(ControllerButtonEvent.Pressed, controller.B.id,
@@ -116,7 +118,7 @@ context.onEvent(ControllerButtonEvent.Pressed, controller.B.id,
         if (gcs) {
             app.popScene()
             gcs = undefined
-            currentSensor = undefined
+            currentRole = undefined
         }
     }
 )
@@ -124,11 +126,11 @@ context.onEvent(ControllerButtonEvent.Pressed, controller.B.id,
 
 basic.forever(() => {
     if (sensorsToProcess.length > 0 && !gcs) {
-        console.log(`processing sensor ${sensorsToProcess[0].name}...`)
-        currentSensor = sensorsToProcess.pop()
+        console.log(`processing sensor ${sensorsToProcess[0]}...`)
+        currentRole = sensorsToProcess.pop()
     } 
-    if (currentSensor) {
-        const textComponent = getTextComponent(currentSensor)
+    if (currentRole) {
+        const textComponent = getTextComponent(currentRole, roleToSensor[currentRole])
         app.popScene()
         gcs = new GUIComponentScene({ app, 
             components: [textComponent] })
