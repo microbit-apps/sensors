@@ -33,13 +33,20 @@ import Button = user_interface_base.Button
 control.singleSimulator();
 const app = new App();
 
+function convertToPercent(sensor: sensors.Sensor) {
+    if (sensor.unitName === "percent") {
+        return Math.roundWithPrecision(sensor.reading*100, 2)+" %"
+    }
+    return `${Math.roundWithPrecision(sensor.reading,3)} ${sensor.unitName}`
+}
+
 function getTextComponent(role: string, sensor: sensors.Sensor) {
     const simpleTextComponent = new TextBox({
         alignment: GUIComponentAlignment.CENTRE,
         isActive: false,
         title: sensor.name,
         text: [
-                `${Math.roundWithPrecision(sensor.reading,3)} ${sensor.unitName}`,
+                convertToPercent(sensor),
                 `min: ${sensor.minimum.toString()}`, 
                 `max: ${sensor.maximum.toString()}`,
                 `role: ${role}`
