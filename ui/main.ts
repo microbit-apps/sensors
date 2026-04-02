@@ -49,7 +49,6 @@ function getTextComponent(role: string, sensor: sensors.Sensor) {
     return simpleTextComponent
 }
 
-let sensorRoleCount = 0
 let sensorsToProcess: string[] = []
 let devicesServiceFound: string[] = []
 
@@ -110,7 +109,6 @@ jacdac.bus.on(jacdac.DEVICE_ANNOUNCE, (dev: jacdac.Device) => {
         const sensor = sensors.getJacdacSensor(serviceClass, roleInfo.rName)
         roleToSensor[roleInfo.rName] = sensor
         sensorsToProcess.push(roleInfo.rName)
-        sensorRoleCount++
     }
 })
 
