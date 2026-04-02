@@ -1,6 +1,7 @@
 jacdac.start()
 
 // TODO:
+// efficiency
 // - make it so that the widget updates on sensor change, not just on a loop
 // - make it so that the widget only updates the text, not the whole thing
 // - need a way for user to dismiss the widget, maybe a button on the widget itself?
@@ -70,7 +71,7 @@ const serviceToRoleInfo: ServiceToRoleInfo = {}
 const serviceToCount: ServiceToCount = {}
 const roleToSensor: { [rName: string]: sensors.Sensor } = {}
 
-function getRoleInfoForService(serviceClass: number, deviceId: string, serviceIndex: number): RoleInfo {
+function getRoleInfoForService(serviceClass: number, deviceId: string, serviceIndex: number) : RoleInfo | undefined{
     try {
         const sensorData = sensors.getSimpleSensorMetaData(serviceClass)
         if (!serviceToRoleInfo[serviceClass]) {
@@ -112,8 +113,8 @@ jacdac.bus.on(jacdac.DEVICE_ANNOUNCE, (dev: jacdac.Device) => {
     }
 })
 
-let currentRole: string = undefined
-let gcs : GUIComponentScene = undefined
+let currentRole: string | undefined= undefined
+let gcs : GUIComponentScene | undefined = undefined
 
 context.onEvent(ControllerButtonEvent.Pressed, controller.B.id,
     () => { 
