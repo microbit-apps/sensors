@@ -750,4 +750,15 @@ namespace sensors {
   export function eventOnlyRecordingConfig(inequality: string, comparator: number): RecordingConfig {
     return { measurements: undefined, period: undefined, inequality, comparator }
   }
+
+  export function getSamples(sensors: Sensor[], n: number, waitBetweenSamplesMS: number): number[] {
+    let samples: number[] = [];
+
+    for (let i = 0; i < n; i++) {
+      sensors.forEach(sensor => samples.push(sensor.reading))
+      basic.pause(waitBetweenSamplesMS);
+    }
+
+    return samples;
+  }
 }
