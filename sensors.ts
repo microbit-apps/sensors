@@ -91,6 +91,26 @@ namespace sensors {
     ];
   }
 
+  export function listAllMicrobitSensorsAsStrings(): string[] {
+    return [
+      "Accelerometer X",
+      "Accelerometer Y",
+      "Accelerometer Z",
+      "Pitch",
+      "Roll",
+      "AnalogPin 0",
+      "AnalogPin 1",
+      "AnalogPin 2",
+      "Light",
+      "Temperature",
+      "Magnetometer",
+      "Logo",
+      "Volume",
+      "Compass"
+    ];
+  }
+
+
   export const numberOfSupportedMicrobitSensors: number = 14; // Hard coded since can't reflect enum.
 
   /**
