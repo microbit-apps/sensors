@@ -364,7 +364,7 @@ namespace sensors {
      * Values are shifted out from FIFO if at max capacity.
      * Needed since the entire normalisedBuffer may need to be recalculated upon scrolling or zooming.
      */
-    private dataBuffer: number[]
+    public dataBuffer: number[]
 
     private lastLoggedReading: number;
 
@@ -374,7 +374,7 @@ namespace sensors {
      * Entire dataBuffer may be recalculated via .normaliseDataBuffer()
      * Values are shifted out from FIFO if at max capacity.
      */
-    private normalisedDataBuffer: number[]
+    public normalisedDataBuffer: number[]
 
     constructor(opts: {
       name: string,
