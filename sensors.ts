@@ -331,7 +331,7 @@ namespace sensors {
     public readonly readingError: number;
 
     /** Access to the underlying client object, not used for micro:bit sensors - where this is null, and isJacdacSensor is false. Used by isConnected */
-    private _jdClient: jacdac.SimpleSensorClient;
+    public _jdClient: jacdac.SimpleSensorClient;
 
     /** Set by .setConfig() */
     public totalMeasurements: number
