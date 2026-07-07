@@ -1,4 +1,3 @@
-
 namespace sensors {
     /**
      * A type used solely by the __jacdacSensorMap.
