@@ -181,6 +181,9 @@ namespace sensors {
         return srvClasses.filter(srv => ((srv != null) && (JacdacSimpleSensorSrvs.indexOf(srv) != -1)))
     }
 
+    
+    let numOfEachSimpleSensorModuleMade: { [key: number]: number } = {};
+
     /**
      * Creates a Sensor object from a jacdac service class and a roleName (roleName of your choosing).
      * Will throw an error if the serviceClass is not supported.
@@ -195,8 +198,13 @@ namespace sensors {
     //% group="Get a sensor"
     //% blockSetVariable=mySensor
     //% weight=98
-    export function getJacdacSensor(srv: JacdacSensorSrvs, roleName: string): Sensor {
+    export function getJacdacSensor(srv: JacdacSensorSrvs, roleName: string | undefined): Sensor {
         const s = __jacdacSensorMap[srv];
+
+        if (roleName === undefined || roleName === "") {
+          roleName = s.name + numOfEachSimpleSensorModuleMade[srv]
+          numOfEachSimpleSensorModuleMade[srv]++;
+        }
 
         if (!s)
             throw "Error: Invalid serviceClass: that Jacdac Client is not supported. Please use a SimpleSensorClient."
@@ -216,6 +224,8 @@ namespace sensors {
             jdClient
         });
     }
+
+    
 
 
     /**

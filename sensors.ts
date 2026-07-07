@@ -72,6 +72,129 @@ namespace sensors {
     Compass
   }
 
+
+  export enum MicrobitAndJacdacSensors {
+    //% block="Accelerometer X axis"
+    AccelerometerX,
+    //% block="Accelerometer Y axis"
+    AccelerometerY,
+    //% block="Accelerometer Z axis"
+    AccelerometerZ,
+    //% block="Pitch"
+    Pitch,
+    //% block="Roll"
+    Roll,
+    //% block="Analog on Ring 0"
+    AnalogPin0,
+    //% block="Analog on Ring 1"
+    AnalogPin1,
+    //% block="Analog on Ring 2"
+    AnalogPin2,
+    //% block="Light"
+    Light,
+    //% block="Temperature"
+    Temperature,
+    //% block="Magnetometer"
+    Magnetometer,
+    //% block="Logo"
+    Logo,
+    //% block="Volume"
+    Volume,
+    //% block="Compass"
+    Compass,
+    /** 0x1e9778c5 */
+    //% block="Water Acidity"
+    JD_WaterAcidity = 0x1e9778c5,
+    /** 0x1e117cea */
+    //% block="Air Pressure"
+    JD_AirPressure = 0x1e117cea,
+    /** 0x1473a263 */
+    //% block="Button"
+    JD_Button = 0x1473a263,
+    /** 0x15b7b9bf */
+    //% block="Compass"
+    JD_Compass = 0x15b7b9bf,
+    /** 0x1912c8ae */
+    //% block="DC Current"
+    JD_DcCurrent = 0x1912c8ae,
+    /** 0x1633ac19 */
+    //% block="DC Voltage"
+    JD_DcVoltage = 0x1633ac19,
+    /** 0x141a6b8a */
+    //% block="Distance"
+    JD_Distance = 0x141a6b8a,
+    /** 0x169c9dc6 */
+    //% block="EC02"
+    JD_ECO2 = 0x169c9dc6,
+    /** 0x1f1f7277 */
+    //% block="Electrical Conductivity"
+    JD_ElectricalConductivity = 0x1f1f7277,
+    /** 0x1f47c6c6 */
+    //% block="Flex"
+    JD_Flex = 0x1f47c6c6,
+    /** 0x166c6dc4 */
+    //% block="Heart Rate"
+    JD_HeartRate = 0x166c6dc4,
+    /** 0x16c810b8 */
+    //% block="Humidity"
+    JD_Humidity = 0x16c810b8,
+    /** 0x1e6ecaf2 */
+    //% block="Illuminance"
+    JD_Illuminance = 0x1e6ecaf2,
+    /** 0x17dc9a1c */
+    //% block="Light Level"
+    JD_LightLevel = 0x17dc9a1c,
+    /** 0x12fe180f */
+    //% block="Magnetic Field"
+    JD_MagneticField = 0x12fe180f,
+    /** 0x1f274746 */
+    //% block="Potentiometer"
+    JD_Potentiometer = 0x1f274746,
+    /** 0x10bb4eb6 */
+    //% block="Pulse Oximeter"
+    JD_PulseOximeter = 0x10bb4eb6,
+    /** 0x13734c95 */
+    //% block="Rain Gauge"
+    JD_RainGauge = 0x13734c95,
+    /** 0x10fa29c9 */
+    //% block="Rotary Encoder"
+    JD_RotaryEncoder = 0x10fa29c9,
+    /** 0x19f8e291 */
+    //% block="Rotations Per Minute (RPM)"
+    JD_RotationsPerMinute = 0x19f8e291,
+    /** 0x12fc9103 */
+    //% block="Servo"
+    JD_Servo = 0x12fc9103,
+    /** 0x1d4aa3b3 */
+    //% block="Soil Moisture"
+    JD_SoilMoisture = 0x1d4aa3b3,
+    /** 0x14ad1a5d */
+    //% block="Sound level"
+    JD_SoundLevel = 0x14ad1a5d,
+    /** 0x1421bac7 */
+    //% block="Temperature"
+    JD_Temperature = 0x1421bac7,
+    /** 0x12a5b597 */
+    //% block="TVOC"
+    JD_TVOC = 0x12a5b597,
+    /** 0x1f6e0d90 */
+    //% block="UV Index"
+    JD_UvIndex = 0x1f6e0d90,
+    /** 0x147b62ed */
+    //% block="Water level"
+    JD_Waterlevel = 0x147b62ed,
+    /** 0x1f4d5040 */
+    //% block="Weighing scale"
+    JD_WeightScale = 0x1f4d5040,
+    /** 0x186be92b */
+    //% block="Wind direction"
+    JD_WindDirection = 0x186be92b,
+    /** 0x1b591bbf */
+    //% block="Wind speed"
+    JD_WindSpeed = 0x1b591bbf
+  }
+
+
   export function listAllMicrobitSensors(): MicrobitSensors[] {
     return [
       MicrobitSensors.AccelerometerX,
@@ -300,6 +423,14 @@ namespace sensors {
       }
       default:
         throw "Error: Couldn't build sensor. Passed value '" + sensor + "' doesn't exist on MicrobitSensors enum."
+    }
+  }
+
+  export function getSensor(id: MicrobitAndJacdacSensors) {
+      try { 
+        return getMicrobitSensor(id as MicrobitSensors);
+    } catch (e) {
+        return getJacdacSensor(id as JacdacSensorSrvs, "");
     }
   }
 
