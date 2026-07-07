@@ -184,6 +184,14 @@ namespace sensors {
     
     let numOfEachSimpleSensorModuleMade: { [key: number]: number } = {};
 
+    
+    export function getRolenameForJacdacSensor(srv: JacdacSensorSrvs): string {
+        const s = __jacdacSensorMap[srv];
+        const roleName = s.name + numOfEachSimpleSensorModuleMade[srv]
+        numOfEachSimpleSensorModuleMade[srv]++;
+        return roleName;
+    }
+
     /**
      * Creates a Sensor object from a jacdac service class and a roleName (roleName of your choosing).
      * Will throw an error if the serviceClass is not supported.
