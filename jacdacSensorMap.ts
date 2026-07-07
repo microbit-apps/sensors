@@ -167,39 +167,19 @@ namespace sensors {
     // Exported factory functions hereon:
     //-----------------------------------
 
-    // let __simpleSensorClients: jacdac.SimpleSensorClient[] = [];
 
-    let __currentJacdacSensors: Sensor[] = [];
-
+    /**
+    *
+    */
     //% block="Dynamically construct jacdac sensor clients"
     //% group="Dynamically find sensors"
     //% blockSetVariable=mySensors
     //% weight=97
-    export function getConnectedJacdacSensors(): Sensor[] {
-        // Since we can't get device ids of the servers themselves (maybe sim limitation?) we need to get count ahead of time:
-        const srvClasses: number[] = jacdac.bus.devices.map(device => device.serviceClassAt(1)) // presume 1 service for now...
-        const simpleSensorClients = __currentJacdacSensors.map(s => s._jdClient);
+    export function getConnectedJacdacSrvs(): JacdacSensorSrvs[] {
+        const srvClasses: JacdacSensorSrvs[] = jacdac.bus.devices.map(device => device.serviceClassAt(1)) // presume 1 service for now...
 
-
-        for (let i = 0; i < srvClasses.length; i++) {
-            const srv = srvClasses[i];
-            const isValidSimpleSensor = (srv != null) && (JacdacSimpleSensorSrvs.indexOf(srv) != -1);
-
-            if (!isValidSimpleSensor)
-                continue;
-
-            const clientWithSrv = simpleSensorClients.filter(c => c.serviceClass == srv).length;
-            const numSrvs = srvClasses.filter(s => s == srv).length;
-            const isUniqueSrv = (clientWithSrv < numSrvs);
-
-            if (isUniqueSrv) {
-                __currentJacdacSensors.push(getJacdacSensor(srv, __jacdacSensorMap[srv].name + (clientWithSrv + 1)))
-            }
-        }
-
-        return __currentJacdacSensors;
+        return srvClasses.filter(srv => ((srv != null) && (JacdacSimpleSensorSrvs.indexOf(srv) != -1)))
     }
-
 
     /**
      * Creates a Sensor object from a jacdac service class and a roleName (roleName of your choosing).
