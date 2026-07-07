@@ -428,9 +428,9 @@ namespace sensors {
 
   export function getSensor(id: MicrobitAndJacdacSensors) {
       try { 
-        return getMicrobitSensor(id as MicrobitSensors);
+        return getMicrobitSensor(id as number as MicrobitSensors);
     } catch (e) {
-        return getJacdacSensor(id as JacdacSensorSrvs, "");
+        return getJacdacSensor(id as number as JacdacSensorSrvs, "");
     }
   }
 
