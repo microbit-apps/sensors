@@ -129,7 +129,7 @@ namespace sensors {
     }
 
     // Unfortunately a duplicate of the above is necessary since Object.keys() doesn't work with enums:
-    const JacdacSimpleSensorSrvs: number[] = [
+    export const JacdacSimpleSensorSrvs: number[] = [
         0x1e9778c5,
         0x1e117cea,
         0x1473a263,
