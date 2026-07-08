@@ -187,6 +187,9 @@ namespace sensors {
     
     export function getRolenameForJacdacSensor(srv: JacdacSensorSrvs): string {
         const s = __jacdacSensorMap[srv];
+        if (numOfEachSimpleSensorModuleMade[srv] === undefined) {
+          numOfEachSimpleSensorModuleMade[srv] = 0;
+        }
         const roleName = s.name + numOfEachSimpleSensorModuleMade[srv]
         numOfEachSimpleSensorModuleMade[srv]++;
         return roleName;

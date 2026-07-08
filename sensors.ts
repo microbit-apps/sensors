@@ -233,7 +233,6 @@ namespace sensors {
     ];
   }
 
-
   export const numberOfSupportedMicrobitSensors: number = 14; // Hard coded since can't reflect enum.
 
   /**
