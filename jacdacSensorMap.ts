@@ -284,7 +284,7 @@ namespace sensors {
             name: "JacdacWaterAcidity",
             rName: "JDA",
             min: 2.5,
-            max: 10,
+            max: 10.1,
             typeOfReadingRegister: "number",
             units: ["pH", "pH"],
             error: 0.1,
@@ -304,7 +304,7 @@ namespace sensors {
             name: "JacdacButton",
             rName: "JDB",
             min: 0,
-            max: 100,
+            max: 1,
             typeOfReadingRegister: "number",
             units: ["", ""],
             error: 0, // Bouncing, etc not accounted for.
@@ -324,7 +324,7 @@ namespace sensors {
             name: "JacdacDcCurrent",
             rName: "JDCC",
             min: 0,
-            max: 360,
+            max: 1,
             typeOfReadingRegister: "number",
             units: ["Amps", "A"], // Simulator uses a scale from 0 to 1000mA though.
             error: 0, // This returns ? on the simulator. It's also dependent on the reading I believe.
@@ -334,7 +334,7 @@ namespace sensors {
             name: "JacdacDcVoltage",
             rName: "JDCV",
             min: 0,
-            max: 360,
+            max: 7,
             typeOfReadingRegister: "number",
             units: ["Volts", "V"],
             error: 0, // This returns ? on the simulator. It's also dependent on the reading I believe.
@@ -361,7 +361,7 @@ namespace sensors {
             stateFormat: "u22.10"
         },
         [JacdacSensorSrvs.ElectricalConductivity]: { // 0x1f1f7277
-            name: "JacdacElectricalConductivity",
+            name: "JacdacElec-Cond.",
             rName: "JDEC",
             min: 0,
             max: 9990, // The simulator actually goes beyond this, probably due to +-error
