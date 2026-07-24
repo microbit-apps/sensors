@@ -259,7 +259,7 @@ namespace sensors {
     const jdClient = new jacdac.SimpleSensorClient(srv, roleName, s.stateFormat);
 
     return new Sensor({
-      name: s.name,
+      name: roleName,
       rName: s.rName,
       sensorFn: () => jdClient.reading(),
       min: s.min,
