@@ -189,7 +189,7 @@ namespace sensors {
     for (let i = 0; i < jacdac.bus.devices.length; i++) {
       const device = jacdac.bus.devices[i]
       const srv: number = device.serviceClassAt(1) // presume 1 service for now...
-      const deviceId: number = +device.deviceId
+      const deviceId: string = device.deviceId
 
       if ((srv != null) && (JacdacSimpleSensorSrvs.indexOf(srv) != -1)) {
         roleNames[i] = getRolenameForJacdacSensor(deviceId, srv);
@@ -205,7 +205,7 @@ namespace sensors {
     for (let i = 0; i < jacdac.bus.devices.length; i++) {
       const device = jacdac.bus.devices[i]
       const srv: number = device.serviceClassAt(1) // presume 1 service for now...
-      const deviceId: number = +device.deviceId
+      const deviceId: string = device.deviceId
 
       if ((srv != null) && (JacdacSimpleSensorSrvs.indexOf(srv) != -1)) {
         const roleName = getRolenameForJacdacSensor(deviceId, srv);
@@ -218,7 +218,7 @@ namespace sensors {
 
   const _roleNames: { [key: string]: string } = {};
   const _nextIndexForService: { [srv: number]: number } = {};
-  export function getRolenameForJacdacSensor(deviceId: number, srv: JacdacSensorSrvs): string {
+  export function getRolenameForJacdacSensor(deviceId: string, srv: JacdacSensorSrvs): string {
     const key = `${deviceId}:${srv}`;
 
     // Already assigned? Return the existing role name.
@@ -413,7 +413,7 @@ namespace sensors {
       min: -1,
       max: 1,
       typeOfReadingRegister: "number",
-      units: ["percent", "%"],
+      units: ["", ""],
       error: 0, // None stated
       stateFormat: "i1.15"
     },
@@ -446,15 +446,14 @@ namespace sensors {
       units: ["lux", "lx"],
       error: 0, // None stated
       stateFormat: "u22.10"
-
     },
     [JacdacSensorSrvs.LightLevel]: { // 0x17dc9a1c
       name: "JacdacLightLevel",
       rName: "JDLL",
       min: 0,
-      max: 100,
+      max: 1,
       typeOfReadingRegister: "number",
-      units: ["percent", "%"],
+      units: ["", ""],
       error: 0, // None stated
       stateFormat: "u0.16"
     },
@@ -544,7 +543,7 @@ namespace sensors {
       min: 0,
       max: 1,
       typeOfReadingRegister: "number",
-      units: ["percent", "%"],
+      units: ["", ""],
       error: 0, // None stated
       stateFormat: "u0.16"
     },
