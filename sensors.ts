@@ -433,8 +433,8 @@ namespace sensors {
     }
   }
 
-  export function getAllConnectedSensors(): Sensor[] {
-    return listAllMicrobitSensors().map(id => getMicrobitSensor(id)).concat(getConnectedJacdacSimpleSensors())
+  export function getAllMicrobitSensors(): Sensor[] {
+    return listAllMicrobitSensors().map(id => getMicrobitSensor(id))
   }
 
 

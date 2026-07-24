@@ -199,7 +199,7 @@ namespace sensors {
     return roleNames
   }
 
-  export function getConnectedJacdacSimpleSensors(): Sensor[] {
+  export function getAllConnectedJacdacSimpleSensors(): Sensor[] {
     let sensors: Sensor[] = []
 
     for (let i = 0; i < jacdac.bus.devices.length; i++) {
