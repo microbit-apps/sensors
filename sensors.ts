@@ -363,7 +363,7 @@ namespace sensors {
 
       case (MicrobitSensors.Temperature): {
         return new Sensor({
-          name: "Temp.",
+          name: "Temperature"
           rName: "T",
           sensorFn: () => input.temperature(),
           min: -40,
@@ -375,7 +375,7 @@ namespace sensors {
 
       case (MicrobitSensors.Magnetometer): {
         return new Sensor({
-          name: "Magnet",
+          name: "Magnetometer",
           rName: "M",
           sensorFn: () => input.magneticForce(Dimension.Strength),
           min: -5000,
