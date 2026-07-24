@@ -201,40 +201,32 @@ namespace sensors {
 
   export function getAllConnectedJacdacSimpleSensors(): Sensor[] {
     let sensors: Sensor[] = []
-
     for (let i = 0; i < jacdac.bus.devices.length; i++) {
       const device = jacdac.bus.devices[i]
       const srv: number = device.serviceClassAt(1) // presume 1 service for now...
-      const deviceId: string = device.deviceId
-
+      const deviceId: string = device.deviceId // keep as string — 64-bit hex overflows/mis-parses as number
       if ((srv != null) && (JacdacSimpleSensorSrvs.indexOf(srv) != -1)) {
         const roleName = getRolenameForJacdacSensor(deviceId, srv);
         sensors.push(getJacdacSensor(srv, roleName))
       }
     }
-
     return sensors
   }
 
   const _roleNames: { [key: string]: string } = {};
   const _nextIndexForService: { [srv: number]: number } = {};
+
   export function getRolenameForJacdacSensor(deviceId: string, srv: JacdacSensorSrvs): string {
     const key = `${deviceId}:${srv}`;
-
-    // Already assigned? Return the existing role name.
     if (_roleNames[key])
       return _roleNames[key];
-
     const s = __jacdacSensorMap[srv];
     if (_nextIndexForService[srv] === undefined)
       _nextIndexForService[srv] = 1;
-
     const roleName = `${s.name}${_nextIndexForService[srv]++}`;
     _roleNames[key] = roleName;
-
     return roleName;
   }
-
 
   /**
    * Creates a Sensor object from a jacdac service class and a roleName (roleName of your choosing).
