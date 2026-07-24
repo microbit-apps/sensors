@@ -216,19 +216,19 @@ namespace sensors {
 
   export function listAllMicrobitSensorsAsStrings(): string[] {
     return [
-      "Accelerometer X",
-      "Accelerometer Y",
-      "Accelerometer Z",
+      "Accel. X",
+      "Accel. Y",
+      "Accel. Z",
       "Pitch",
       "Roll",
-      "Analog Pin 0",
-      "Analog Pin 1",
-      "Analog Pin 2",
+      "A. Pin 0",
+      "A. Pin 1",
+      "A. Pin 2",
       "Light",
       "Temperature",
       "Magnetometer",
-      "Logo",
-      "Volume",
+      "Logo Press",
+      "Microphone",
       "Compass"
     ];
   }
