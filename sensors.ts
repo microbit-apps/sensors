@@ -433,6 +433,11 @@ namespace sensors {
     }
   }
 
+  export function getAllConnectedSensors(): Sensor[] {
+    return listAllMicrobitSensors().map(id => getMicrobitSensor(id)).concat(getConnectedJacdacSimpleSensors())
+  }
+
+
   /**
    * Abstraction for all available sensors.
    * This class is extended by each of the concrete sensors which add on static methods for their name, getting their readings & optionally min/max readings

@@ -199,7 +199,7 @@ namespace sensors {
     return roleNames
   }
 
-  export function getConnectedSimpleSensors(): Sensor[] {
+  export function getConnectedJacdacSimpleSensors(): Sensor[] {
     let sensors: Sensor[] = []
 
     for (let i = 0; i < jacdac.bus.devices.length; i++) {
@@ -215,7 +215,6 @@ namespace sensors {
 
     return sensors
   }
-
 
   const _roleNames: { [key: string]: string } = {};
   const _nextIndexForService: { [srv: number]: number } = {};
