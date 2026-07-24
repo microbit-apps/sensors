@@ -181,22 +181,40 @@ namespace sensors {
     return srvClasses.filter(srv => ((srv != null) && (JacdacSimpleSensorSrvs.indexOf(srv) != -1)))
   }
 
-  const roleNames: { [key: string]: string } = {};
-  const nextIndexForService: { [srv: number]: number } = {};
+  // We see the devices & srvs on the bus, these are presented to the user with a dynamically created rolename
+  // But we don't actually make a SimpleSensorClient until they request it
+  export function getConnectedJacdacDevicesByRolename(): string[] {
+    const roleNames: string[] = []
 
+    for (let i = 0; i < jacdac.bus.devices.length; i++) {
+      const device = jacdac.bus.devices[i]
+      const srv: number = device.serviceClassAt(1) // presume 1 service for now...
+      const deviceId: number = +device.deviceId
+
+      if ((srv != null) && (JacdacSimpleSensorSrvs.indexOf(srv) != -1)) {
+        roleNames[i] = getRolenameForJacdacSensor(deviceId, srv);
+      }
+    }
+
+    return roleNames
+  }
+
+
+  const _roleNames: { [key: string]: string } = {};
+  const _nextIndexForService: { [srv: number]: number } = {};
   export function getRolenameForJacdacSensor(deviceId: number, srv: JacdacSensorSrvs): string {
     const key = `${deviceId}:${srv}`;
 
     // Already assigned? Return the existing role name.
-    if (roleNames[key])
-      return roleNames[key];
+    if (_roleNames[key])
+      return _roleNames[key];
 
     const s = __jacdacSensorMap[srv];
-    if (nextIndexForService[srv] === undefined)
-      nextIndexForService[srv] = 1;
+    if (_nextIndexForService[srv] === undefined)
+      _nextIndexForService[srv] = 1;
 
-    const roleName = `${s.name}${nextIndexForService[srv]++}`;
-    roleNames[key] = roleName;
+    const roleName = `${s.name}${_nextIndexForService[srv]++}`;
+    _roleNames[key] = roleName;
 
     return roleName;
   }
@@ -220,7 +238,7 @@ namespace sensors {
     const s = __jacdacSensorMap[srv];
 
     if (roleName === undefined || roleName === "") {
-      roleName = `${s.name}${nextIndexForService[srv]++}`;
+      roleName = `${s.name}${_nextIndexForService[srv]++}`;
     }
 
     if (!s)
