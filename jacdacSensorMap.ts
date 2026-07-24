@@ -199,6 +199,23 @@ namespace sensors {
     return roleNames
   }
 
+  export function getConnectedSimpleSensors(): Sensor[] {
+    let sensors: Sensor[] = []
+
+    for (let i = 0; i < jacdac.bus.devices.length; i++) {
+      const device = jacdac.bus.devices[i]
+      const srv: number = device.serviceClassAt(1) // presume 1 service for now...
+      const deviceId: number = +device.deviceId
+
+      if ((srv != null) && (JacdacSimpleSensorSrvs.indexOf(srv) != -1)) {
+        const roleName = getRolenameForJacdacSensor(deviceId, srv);
+        sensors.push(getJacdacSensor(srv, roleName))
+      }
+    }
+
+    return sensors
+  }
+
 
   const _roleNames: { [key: string]: string } = {};
   const _nextIndexForService: { [srv: number]: number } = {};
@@ -234,12 +251,8 @@ namespace sensors {
   //% group="Get a sensor"
   //% blockSetVariable=mySensor
   //% weight=98
-  export function getJacdacSensor(srv: JacdacSensorSrvs, roleName: string | undefined): Sensor {
+  export function getJacdacSensor(srv: JacdacSensorSrvs, roleName: string): Sensor {
     const s = __jacdacSensorMap[srv];
-
-    if (roleName === undefined || roleName === "") {
-      roleName = `${s.name}${_nextIndexForService[srv]++}`;
-    }
 
     if (!s)
       throw "Error: Invalid serviceClass: that Jacdac Client is not supported. Please use a SimpleSensorClient."
