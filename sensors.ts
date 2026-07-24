@@ -363,7 +363,7 @@ namespace sensors {
 
       case (MicrobitSensors.Temperature): {
         return new Sensor({
-          name: "Temperature"
+          name: "Temperature",
           rName: "T",
           sensorFn: () => input.temperature(),
           min: -40,
