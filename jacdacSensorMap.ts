@@ -199,19 +199,28 @@ namespace sensors {
     return roleNames
   }
 
+  const _jacdacSensors: { [key: string]: Sensor } = {};
   export function getAllConnectedJacdacSimpleSensors(): Sensor[] {
     let sensors: Sensor[] = []
+
     for (let i = 0; i < jacdac.bus.devices.length; i++) {
       const device = jacdac.bus.devices[i]
-      const srv: number = device.serviceClassAt(1) // presume 1 service for now...
-      const deviceId: string = device.deviceId // keep as string — 64-bit hex overflows/mis-parses as number
+      const srv: number = device.serviceClassAt(1)
+      const deviceId: string = device.deviceId
+
       if ((srv != null) && (JacdacSimpleSensorSrvs.indexOf(srv) != -1)) {
-        const roleName = getRolenameForJacdacSensor(deviceId, srv);
-        sensors.push(getJacdacSensor(srv, roleName))
+        const key = `${deviceId}:${srv}`
+        if (!_jacdacSensors[key]) {
+          const roleName = getRolenameForJacdacSensor(deviceId, srv);
+          _jacdacSensors[key] = getJacdacSensor(srv, roleName)
+        }
+        sensors.push(_jacdacSensors[key])
       }
+
     }
     return sensors
   }
+
 
   const _roleNames: { [key: string]: string } = {};
   const _nextIndexForService: { [srv: number]: number } = {};
