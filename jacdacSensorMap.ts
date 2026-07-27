@@ -167,6 +167,41 @@ namespace sensors {
   // Exported factory functions hereon:
   //-----------------------------------
 
+  const __connectedJacdacSimpleSensors: { [key: string]: Sensor } = {};
+  let __simpleSensorKeys: string[] = [];
+
+  function simpleSensorKeys(): string[] {
+    const keys: string[] = []
+    for (let i = 0; i < jacdac.bus.devices.length; i++) {
+      const device = jacdac.bus.devices[i]
+      const srv: number = device.serviceClassAt(1) // presume 1 service for now...
+      const deviceId: string = device.deviceId
+      if ((srv != null) && (JacdacSimpleSensorSrvs.indexOf(srv) != -1))
+        keys.push(`${deviceId}:${srv}`)
+    }
+    return keys
+  }
+
+  /**
+  * jacdac.bus.on(jacdac.DEVICE_CONNECT) triggers for non simple sensors and for each change.
+  * Disconnecting 2 sensors at once causes 2 triggers, which may not be what you want
+  */
+  export function onSimpleSensorChange(cb: () => void) {
+    const update = () => {
+      const keys = simpleSensorKeys()
+      const changed = keys.length != __simpleSensorKeys.length
+        || keys.some(k => __simpleSensorKeys.indexOf(k) < 0)
+      if (!changed) return
+      // Drop clients for departed devices; survivors keep their Sensor object.
+      __simpleSensorKeys
+        .filter(k => keys.indexOf(k) < 0)
+        .forEach(k => __connectedJacdacSimpleSensors[k] = undefined)
+      __simpleSensorKeys = keys
+      cb()
+    }
+    jacdac.bus.on(jacdac.DEVICE_CONNECT, update)
+    jacdac.bus.on(jacdac.DEVICE_DISCONNECT, update)
+  }
 
   /**
   *
@@ -199,7 +234,7 @@ namespace sensors {
     return roleNames
   }
 
-  const _jacdacSensors: { [key: string]: Sensor } = {};
+  const __jacdacSensorsRoleNameMap: { [key: string]: Sensor } = {};
   export function getAllConnectedJacdacSimpleSensors(): Sensor[] {
     let sensors: Sensor[] = []
 
@@ -210,11 +245,11 @@ namespace sensors {
 
       if ((srv != null) && (JacdacSimpleSensorSrvs.indexOf(srv) != -1)) {
         const key = `${deviceId}:${srv}`
-        if (!_jacdacSensors[key]) {
+        if (!__jacdacSensorsRoleNameMap[key]) {
           const roleName = getRolenameForJacdacSensor(deviceId, srv);
-          _jacdacSensors[key] = getJacdacSensor(srv, roleName)
+          __jacdacSensorsRoleNameMap[key] = getJacdacSensor(srv, roleName)
         }
-        sensors.push(_jacdacSensors[key])
+        sensors.push(__jacdacSensorsRoleNameMap[key])
       }
 
     }
