@@ -247,7 +247,7 @@ namespace sensors {
         const key = `${deviceId}:${srv}`
         if (!__jacdacSensorsRoleNameMap[key]) {
           const roleName = getRolenameForJacdacSensor(deviceId, srv);
-          __jacdacSensorsRoleNameMap[key] = getJacdacSensor(srv, roleName)
+          __jacdacSensorsRoleNameMap[key] = _getJacdacSensor(srv, roleName)
         }
         sensors.push(__jacdacSensorsRoleNameMap[key])
       }
@@ -305,7 +305,11 @@ namespace sensors {
   //% roleName.shadow="jacdacNameShadow"
   //% group="Create a sensor"
   //% weight=98
-  export function getJacdacSensor(srv: JacdacSensorSrvs, roleName: string): Sensor {
+  export function getJacdacSensor(srv: JacdacSensorSrvs, roleName: string): void {
+    _getJacdacSensor(srv, roleName);
+  }
+
+  export function _getJacdacSensor(srv: JacdacSensorSrvs, roleName: string): Sensor {
     const s = __jacdacSensorMap[srv];
 
     if (!s)

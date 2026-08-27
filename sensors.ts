@@ -429,7 +429,7 @@ namespace sensors {
       try { 
         return getMicrobitSensor(id as number as MicrobitSensors);
     } catch (e) {
-        return getJacdacSensor(id as number as JacdacSensorSrvs, "");
+        return _getJacdacSensor(id as number as JacdacSensorSrvs, "");
     }
   }
 
