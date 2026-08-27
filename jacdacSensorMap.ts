@@ -272,6 +272,25 @@ namespace sensors {
     return roleName;
   }
 
+  //% block="$name"
+  //% blockId=jacdacNameShadow
+  //% blockHidden=true shim=TD_ID
+  //% name.fieldEditor="autocomplete" name.fieldOptions.decompileLiterals=true
+  //% name.fieldOptions.key="jacdacrolename"
+  export function _jacdacNameShadow(name: string) {
+      return name
+  }
+
+  // map for storing role name to sensors
+  const __jacdacSensorRoleNameMap: { [key: string]: Sensor } = {};
+
+  export function getJacdacSensorByRoleName(roleName: string): Sensor {
+      if (!__jacdacSensorRoleNameMap[roleName]) {
+        throw `Error: No sensor with the roleName ${roleName} exists. Please check your spelling or create a new sensor with that roleName.`;
+      }
+      return __jacdacSensorRoleNameMap[roleName];
+  }
+  
   /**
    * Creates a Sensor object from a jacdac service class and a roleName (roleName of your choosing).
    * Will throw an error if the serviceClass is not supported.
@@ -280,11 +299,11 @@ namespace sensors {
    * @param jdClient is a SimpleSensorClient, its .serviceClass is used to look up metadata about the sensor.
    * @returns A Sensor object that can be used like any other sensor in this library.
    */
-  //% block="Get a jacdac sensor $srv and name it $roleName"
+  //% block="Create a jacdac sensor $srv and name it $roleName"
   //% srv.defl=JacdacSensorSrvs.WaterAcidity
   //% roleName.defl="jacdacSensor1"
-  //% group="Get a sensor"
-  //% blockSetVariable=mySensor
+  //% roleName.shadow="jacdacNameShadow"
+  //% group="Create a sensor"
   //% weight=98
   export function getJacdacSensor(srv: JacdacSensorSrvs, roleName: string): Sensor {
     const s = __jacdacSensorMap[srv];
@@ -294,7 +313,7 @@ namespace sensors {
 
     const jdClient = new jacdac.SimpleSensorClient(srv, roleName, s.stateFormat);
 
-    return new Sensor({
+    const sensor = new Sensor({
       name: roleName,
       rName: s.rName,
       sensorFn: () => jdClient.reading(),
@@ -306,6 +325,14 @@ namespace sensors {
       setupFn: () => { jdClient.start(); jdClient.reading(); },
       jdClient
     });
+
+    // check if we are already tracking a sensor with this roleName, if so, raise an error
+    if (__jacdacSensorRoleNameMap[roleName]) {
+      throw `Error: A sensor with the roleName ${roleName} already exists. Please choose a different roleName.`;
+    }
+
+    __jacdacSensorRoleNameMap[roleName] = sensor;
+    return sensor;
   }
 
 

@@ -437,6 +437,63 @@ namespace sensors {
     return listAllMicrobitSensors().map(id => getMicrobitSensor(id))
   }
 
+  /** Latest value from the sensor. Does not change any buffered readings.*/
+  //% blockId="sensor_reading" block="get reading from %sensor(mySensor)"
+  //% group="Get data from sensors"
+  //% roleName.shadow="jacdacNameShadow"
+  //% weight=100
+  export function reading(roleName: string): number { 
+    return getJacdacSensorByRoleName(roleName).sensorFn()
+  }
+
+  /** Latest value from the sensor. Normalised by this sensors minimum and maximum. Does not change any buffered readings.*/
+  //% blockId="sensor_normalised_reading" block="get normalised reading from %sensor(mySensor)"
+  //% group="Get data from sensors"
+  //% roleName.shadow="jacdacNameShadow"
+  //% weight=99
+  export function  normalisedReading(roleName: string): number { 
+    const sensor = getJacdacSensorByRoleName(roleName)
+    return (sensor.sensorFn() - sensor.minimum) / sensor.range
+  }
+  
+  //% blockId="sensor_min" block="get the minimum possible value of %sensor(mySensor)"
+  //% group="Get data from sensors"
+  //% roleName.shadow="jacdacNameShadow"
+  //% weight=98
+  export function min(roleName: string): number { return getJacdacSensorByRoleName(roleName).minimum }
+
+  //% blockId="sensor_max" block="get the maximum possible value of %sensor(mySensor)"
+  //% group="Get data from sensors"
+  //% roleName.shadow="jacdacNameShadow"
+  //% weight=97
+  export function max(roleName: string): number { return getJacdacSensorByRoleName(roleName).maximum }
+
+  //% blockId="sensor_unit_symbol" block="get the symbol for the units of %sensor(mySensor) "
+  //% group="Get data from sensors"
+  //% roleName.shadow="jacdacNameShadow"
+  //% weight=96
+  export function unitSymbol(roleName: string): string { return getJacdacSensorByRoleName(roleName).unitSymbol }
+
+  //% blockId="sensor_unit_name" block="get the name for the units of %sensor(mySensor)"
+  //% group="Get data from sensors"
+  //% roleName.shadow="jacdacNameShadow"
+  //% weight=95
+  export function unitName(roleName: string): string { return getJacdacSensorByRoleName(roleName).unitName }
+
+  //% blockId="sensor_is_connected" block="is %sensor(mySensor) connected?"
+  //% group="Get data from sensors"
+  //% weight=94
+  //% roleName.shadow="jacdacNameShadow"
+  //% weight=94
+  export function isConnected(roleName: string): boolean { return getJacdacSensorByRoleName(roleName).isConnected }
+
+  //% blockId="sensor_show_reading" block="show a reading from %sensor(mySensor) truncated to be $truncatedTo length"
+  //% group="Get data from sensors"
+  //% roleName.shadow="jacdacNameShadow"
+  //% weight=93
+  export function showReading(roleName: string, truncatedTo: number = READING_PRECISION): void { 
+    basic.showString(getJacdacSensorByRoleName(roleName).formatReading().slice(0, truncatedTo)) 
+  }
 
   /**
    * Abstraction for all available sensors.
@@ -455,13 +512,13 @@ namespace sensors {
     /** Immutable: Abs(minimum) + Abs(maximum); calculated once at start since min & max can't change */
     public readonly range: number;
     /** Immutable: Wrapper around the sensors call, e.g: sensorFn = () => input.acceleration(Dimension.X) */
-    private readonly sensorFn: () => number;
+    public readonly sensorFn: () => number;
     /** Immutable: Need to know whether or not this sensor is on the microbit or is an external Jacdac one; see sensorSelection.ts */
     public readonly isJacdacSensor: boolean;
     /** Immutable: "percent", "pH", "hectopascals". Is "" where not applicable. */
-    private readonly _unitName: string;
+    public readonly _unitName: string;
     /** Immutable: Examples: "%", "pH", "hPa". Is "" where not applicable.  */
-    private readonly _unitSymbol: string;
+    public readonly _unitSymbol: string;
     /** Immutable: The + or - error for the sensor. This is 0 where it is not-stated or known. */
     public readonly readingError: number;
 
@@ -609,47 +666,13 @@ namespace sensors {
     // Interface Functions:
     //---------------------
 
-    /** Latest value from the sensor. Does not change any buffered readings.*/
-    //% blockId="sensor_reading" block="get reading from %sensor(mySensor)"
-    //% group="Get data from sensors"
-    //% weight=100
     get reading(): number { return this.sensorFn() }
-
-    /** Latest value from the sensor. Normalised by this sensors minimum and maximum. Does not change any buffered readings.*/
-    //% blockId="sensor_normalised_reading" block="get normalised reading from %sensor(mySensor)"
-    //% group="Get data from sensors"
-    //% weight=99
     get normalisedReading(): number { return (this.reading - this.minimum) / this.range }
-  
-    //% blockId="sensor_min" block="get the minimum possible value of %sensor(mySensor)"
-    //% group="Get data from sensors"
-    //% weight=98
     get min(): number { return this.minimum }
-
-    //% blockId="sensor_max" block="get the maximum possible value of %sensor(mySensor)"
-    //% group="Get data from sensors"
-    //% weight=97
     get max(): number { return this.maximum }
-
-    //% blockId="sensor_unit_symbol" block="get the symbol for the units of %sensor(mySensor) "
-    //% group="Get data from sensors"
-    //% weight=96
     get unitSymbol(): string { return this._unitSymbol }
-
-    //% blockId="sensor_unit_name" block="get the name for the units of %sensor(mySensor)"
-    //% group="Get data from sensors"
-    //% weight=95
     get unitName(): string { return this._unitName }
-
-
-    //% blockId="sensor_is_connected" block="is %sensor(mySensor) connected?"
-    //% group="Get data from sensors"
-    //% weight=94
     get isConnected(): boolean { return (this.isJacdacSensor) ? this._jdClient.isConnected() : true }
-
-    //% blockId="sensor_show_reading" block="show a reading from %sensor(mySensor) truncated to be $truncatedTo length"
-    //% group="Get data from sensors"
-    //% weight=93
     public showReading(truncatedTo: number = READING_PRECISION): void { basic.showString(this.formatReading().slice(0, truncatedTo)) }
 
     //---------------
@@ -665,9 +688,6 @@ namespace sensors {
      * @param fromY the offset by which the reading should be raised before adding to this.normalisedBuffer
      * @returns the new length of this.dataBuffer (same as this.normalisedDataBuffer)
      */
-    //% blockId="sensor_read_into_buffer_once" block="read into %sensor(mySensor) buffer & normalised buffer, then get its new length"
-    //% group="Get data from the sensor's buffer"
-    //% weight=100
     public readIntoBufferOnce(): number {
       const reading = this.reading
 
@@ -685,31 +705,14 @@ namespace sensors {
       return this.dataBuffer.length
     }
 
-    //% blockId="sensor_get_nth_reading" block="get the reading from %sensor(mySensor) buffer at index $n"
-    //% group="Get data from the sensor's buffer"
-    //% weight=99
     public getNthReading(n: number): number { return this.dataBuffer[n] }
     
-    //% blockId="sensor_get_nth_normalised_reading" block="get the normalised reading from %sensor(mySensor) buffer at index $n"
-    //% group="Get data from the sensor's buffer"
-    //% weight=98
     public getNthNormalisedReading(n: number): number { return this.normalisedDataBuffer[n] }
 
-    /** Should be the same as .normalisedBufferLength() */
-    //% blockId="sensor_buffer_length" block="get %sensor(mySensor) buffer length"
-    //% group="Get data from the sensor's buffer"
-    //% weight=97
     get bufferLength(): number { return this.dataBuffer.length }
     
-    /** Should be the same as .bufferLength() */
-    //% blockId="sensor_normalised_buffer_length" block="get %sensor(mySensor) normalised buffer length"
-    //% group="Get data from the sensor's buffer"
-    //% weight=96
     get normalisedBufferLength(): number { return this.normalisedDataBuffer.length }
 
-    //% blockId="sensor_get_max_buffer_size" block="get %sensor(mySensor) buffer's current maximum length"
-    //% group="Get data from the sensor's buffer"
-    //% weight=95
     public getMaxBufferSize(): number { return this.maxBufferSize }
 
     /**
@@ -717,9 +720,6 @@ namespace sensors {
      * Will shift out old this.dataBuffer & this.normalisedBuffer values from the front.
      * @param newBufferSize absolute new value for both this.dataBuffer & this.normalisedBuffer
      */
-    //% blockId="sensor_set_buffer_size" block="set the size of %sensor(mySensor) data buffer and normalised data buffer to $newBufferSize"
-    //% group="Get data from the sensor's buffer"
-    //% weight=95
     public setBufferSize(newBufferSize: number): void {
       // Remove additional values if neccessary:
       if (this.dataBuffer.length > newBufferSize) {
@@ -744,7 +744,7 @@ namespace sensors {
      * You can pass in control.millis() if you want the exact time though.
      * @returns A CSV string of the log that was made, the sensors name will be cut-short to its .radioName. "" is returned if no log is made.
      */
-    //% block="log a reading from %sensor(mySensor) and optionally override timestapm with $time. Get log back as a string."
+    //% block="log a reading from %sensor(mySensor) and optionally override timestamp with $time. Get log back as a string."
     //% measurements.defl=10
     //% period.defl=99
     //% group="Logging and events"
