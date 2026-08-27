@@ -438,7 +438,7 @@ namespace sensors {
   }
 
   /** Latest value from the sensor. Does not change any buffered readings.*/
-  //% blockId="sensor_reading" block="get reading from %sensor(mySensor)"
+  //% blockId="sensor_reading" block="get reading from %roleName"
   //% group="Get data from sensors"
   //% roleName.shadow="jacdacNameShadow"
   //% weight=100
@@ -447,7 +447,7 @@ namespace sensors {
   }
 
   /** Latest value from the sensor. Normalised by this sensors minimum and maximum. Does not change any buffered readings.*/
-  //% blockId="sensor_normalised_reading" block="get normalised reading from %sensor(mySensor)"
+  //% blockId="sensor_normalised_reading" block="get normalised reading from %roleName"
   //% group="Get data from sensors"
   //% roleName.shadow="jacdacNameShadow"
   //% weight=99
@@ -456,38 +456,38 @@ namespace sensors {
     return (sensor.sensorFn() - sensor.minimum) / sensor.range
   }
   
-  //% blockId="sensor_min" block="get the minimum possible value of %sensor(mySensor)"
+  //% blockId="sensor_min" block="get the minimum possible value of %roleName"
   //% group="Get data from sensors"
   //% roleName.shadow="jacdacNameShadow"
   //% weight=98
   export function min(roleName: string): number { return getJacdacSensorByRoleName(roleName).minimum }
 
-  //% blockId="sensor_max" block="get the maximum possible value of %sensor(mySensor)"
+  //% blockId="sensor_max" block="get the maximum possible value of %roleName"
   //% group="Get data from sensors"
   //% roleName.shadow="jacdacNameShadow"
   //% weight=97
   export function max(roleName: string): number { return getJacdacSensorByRoleName(roleName).maximum }
 
-  //% blockId="sensor_unit_symbol" block="get the symbol for the units of %sensor(mySensor) "
+  //% blockId="sensor_unit_symbol" block="get the symbol for the units of %roleName"
   //% group="Get data from sensors"
   //% roleName.shadow="jacdacNameShadow"
   //% weight=96
   export function unitSymbol(roleName: string): string { return getJacdacSensorByRoleName(roleName).unitSymbol }
 
-  //% blockId="sensor_unit_name" block="get the name for the units of %sensor(mySensor)"
+  //% blockId="sensor_unit_name" block="get the name for the units of %roleName"
   //% group="Get data from sensors"
   //% roleName.shadow="jacdacNameShadow"
   //% weight=95
   export function unitName(roleName: string): string { return getJacdacSensorByRoleName(roleName).unitName }
 
-  //% blockId="sensor_is_connected" block="is %sensor(mySensor) connected?"
+  //% blockId="sensor_is_connected" block="is %roleName connected?"
   //% group="Get data from sensors"
   //% weight=94
   //% roleName.shadow="jacdacNameShadow"
   //% weight=94
   export function isConnected(roleName: string): boolean { return getJacdacSensorByRoleName(roleName).isConnected }
 
-  //% blockId="sensor_show_reading" block="show a reading from %sensor(mySensor) truncated to be $truncatedTo length"
+  //% blockId="sensor_show_reading" block="show a reading from %roleName truncated to be $truncatedTo length"
   //% group="Get data from sensors"
   //% roleName.shadow="jacdacNameShadow"
   //% weight=93
