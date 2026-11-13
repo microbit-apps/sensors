@@ -380,7 +380,7 @@ namespace sensors {
           sensorFn: () => input.magneticForce(Dimension.Strength),
           min: -5000,
           max: 5000,
-          units: ["", ""],
+          units: ["Microteslas", "uT"],
           error: 0,
         });
       }
